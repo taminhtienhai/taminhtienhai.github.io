@@ -1,0 +1,17 @@
+{
+  "name": "taminhtienhai.github.io",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": "git@github.com:taminhtienhai/taminhtienhai.github.io.git",
+  "author": "haitmt <taminhtienhai@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.0.10"
+  }
+}
