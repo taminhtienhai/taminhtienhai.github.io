@@ -3,22 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Harris Ta Blog</title>
-    <link rel="stylesheet" href="static/fontawesome.min.css">
-    <link rel="stylesheet" href="static/brands.min.css">
+    <title>Harris Ta Terminal</title>
     <link rel="stylesheet" href="index.css">
+    
 </head>
 <body>
-    <nav>
-        <header class="logo"></header>
-        <footer class="mode"></footer>
+    <nav flex="~ row justify-between items-center">
+        <h1 basis="auto">harris@~></h1>
+        <input class="prompt">
+        <div basis="1/4">Home</div>
+        <div basis="1/4">About</div>
     </nav>
     <main>
         <p>Welcome everyone that come to my blog</p>
         <br>
-        <p>If you are interesting on #java, #javascript and specially <i class="fab fa-rust"></i> #rust. This is the right place.</p>
-        
+        <p>If you are interesting on <small class="">#java</small>, <small>#javascript</small> and specially <div class="i-mdi:language-rust"></div> <small>#rust</small>. This is the right place.</p>
     </main>
+    <section id="route"></section>
+    <button class="btn home">HomePage</button>
+    <button class="btn detail">PageDetail</button>
 </body>
-<script type="module" src="index.mjs"></script>
+<script type="module" src="src/app.ts"></script>
 </html>
