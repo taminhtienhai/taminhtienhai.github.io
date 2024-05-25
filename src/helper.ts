@@ -10,8 +10,7 @@ export function repeat_template<T>(items: Array<T>, template: (input: T) => HTML
 
 const TEMPLATES: Record<string, string> = {};
 
-export async function load_template_async(name: string) {
-    if (TEMPLATES[name]) { return TEMPLATES[name]; }
-
-    return 'load-template-over-network';
+export async function load_template_async({input: { name }}: {input: { name: string }}) {
+    if (TEMPLATES[name]) { return html`${TEMPLATES[name]}`; }
+    return html`<h1>Dynamic content from ${name}</h1>`;
 }
