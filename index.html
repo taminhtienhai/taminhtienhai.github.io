@@ -5,23 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Harris Ta Terminal</title>
     <link rel="stylesheet" href="index.css">
-    
 </head>
 <body>
     <nav flex="~ row justify-between items-center">
         <h1 basis="auto">harris@~></h1>
         <input class="prompt">
-        <div basis="1/4">Home</div>
-        <div basis="1/4">About</div>
+        <a basis="1/4" class="btn home" hover="bg-sky-700" transition height="100%">
+            Home
+        </a>
+        <a basis="1/4" class="btn detail" hover="bg-sky-700" transition height="100%">
+            About
+        </a>
     </nav>
     <main>
         <p>Welcome everyone that come to my blog</p>
         <br>
         <p>If you are interesting on <small class="">#java</small>, <small>#javascript</small> and specially <div class="i-mdi:language-rust"></div> <small>#rust</small>. This is the right place.</p>
     </main>
-    <section id="route"></section>
-    <button class="btn home">HomePage</button>
-    <button class="btn detail">PageDetail</button>
+    <section id="route" style="width: 100%; height: 100%;"></section>
 </body>
 <script type="module" src="src/app.ts"></script>
 </html>

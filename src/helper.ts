@@ -7,3 +7,11 @@ export function repeat_template<T>(items: Array<T>, template: (input: T) => HTML
         ${repeat(items, (it) => (it as any)?.['id'] ?? (id++), (input, _) => template(input))}
     `;
 }
+
+const TEMPLATES: Record<string, string> = {};
+
+export async function load_template_async(name: string) {
+    if (TEMPLATES[name]) { return TEMPLATES[name]; }
+
+    return 'load-template-over-network';
+}

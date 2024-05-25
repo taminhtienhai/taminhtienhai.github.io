@@ -1,4 +1,4 @@
-import { defineConfig, presetAttributify, presetIcons, presetTagify, presetWind } from 'unocss'
+import { defineConfig, presetAttributify, presetIcons, presetWind } from 'unocss'
 
 export default defineConfig({
     rules: [
@@ -22,11 +22,6 @@ export default defineConfig({
     presets: [
         presetWind(),
         presetAttributify(),
-        presetTagify({
-            extraProperties: matched => matched.startsWith('i-')
-                ? { display: 'inline' }
-                : {}
-        }),
         presetIcons({
             collections: {
                 mdi: () => import('@iconify-json/mdi/icons.json').then(i => i.default),
@@ -37,6 +32,7 @@ export default defineConfig({
         pipeline: {
             include: [
                 'src/**/*.{js,ts}',
+                'index.html',
             ],
         },
     },
