@@ -7,24 +7,22 @@ export class BlogPost {
     sub_title: string = "";
     tags: string[] = [];
     description: string = "";
+    src: string = "";
 
-    constructor(id: number, title: string, tags: string[] = []) {
+    constructor(id: number, title: string, tags: string[] = [], src = "") {
         this.id = id;
         this.title = title;
         this.tags = tags;
+        this.src = src;
     }
 }
 
 export const BlogPostTemplate = (src?: BlogPost) => html`
-    <section class="m-5 rounded-xl">
-        <article class="bg-#435585 text-#F5E8C7 rounded-xl px-2 py-1">
-            <small>2023-01-07</small>
-            <h3 class="text-xl mt-1">${src?.title}</h3>
-            <h5 class="text-sm my-2">${src?.sub_title}</h5>
-            <span>
-                ${repeat_template(src?.tags ?? [], (tag) => html`<i class="chip">#${tag}</i>`)}
-            </span>
-        </article>
+    <section class="m-5 bg-#435585 text-#F5E8C7 rounded-xl px-2 py-1" hover="cursor-pointer">
+        <small hover="text-fuchsia" transition>2023-01-07</small>
+        <h3 class="title" text-xl mt-1 >${src?.title}</h3>
+        <h5 class="sub_title" text-sm my-2>${src?.sub_title}</h5>
+        <span class="tag">${repeat_template(src?.tags ?? [], (tag) => html`<i class="chip">#${tag}</i>`)}</span>
     </section>
 `;
 
