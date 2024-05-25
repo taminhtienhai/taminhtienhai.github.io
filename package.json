@@ -11,6 +11,7 @@
     "gen": "node build.mjs",
     "dev": "vite",
     "build": "vite build",
+    "release": "yarn build && yarn gen",
     "preview": "vite preview"
   },
   "devDependencies": {
