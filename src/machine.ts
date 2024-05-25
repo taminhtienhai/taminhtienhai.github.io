@@ -1,8 +1,12 @@
-import { ActorRef, AnyActorRef, AnyEventObject, EventObject, MachineContext, MachineSnapshot, StateValue, createActor, enqueueActions, sendTo, setup } from "xstate";
+import { Actor, assertEvent, createActor, fromPromise, sendTo, setup } from "xstate";
 import { BlogPost, HomePageTemplate } from "./component";
-import { HTMLTemplateResult, html, render } from "lit-html";
+import { HTMLTemplateResult, render } from "lit-html";
+import { load_template_async } from "./helper";
 
-type ARef<T extends MachineContext> = ActorRef<MachineSnapshot<T, AnyEventObject, Record<string, AnyActorRef | undefined>, StateValue, string, unknown, any>, AnyEventObject, EventObject>;
+type AppEvents = 
+| { type: 'render'; template: string }
+| { type: 'home_page' }
+| { type: 'detail_page' };
 
 const HomeMachine = setup({
     types: {
@@ -12,23 +16,8 @@ const HomeMachine = setup({
                 items: HTMLElement[],
             },
             posts: BlogPost[],
-            // ref: {
-            //     parent: ARef<{
-            //         ui: {
-            //             body: HTMLElement;
-            //             route: HTMLElement;
-            //         };
-            //     }>,
-            // }
         },
-        // input: {} as {
-        //     parent: ARef<{
-        //         ui: {
-        //             body: HTMLElement;
-        //             route: HTMLElement;
-        //         };
-        //     }>,
-        // },
+        events: {} as AppEvents,
     },
     actions: {
         loadUI: ({ context }, { template }: { template: HTMLTemplateResult }) => {
@@ -36,7 +25,7 @@ const HomeMachine = setup({
         },
     },
 }).createMachine({
-    initial: 'setup',
+    initial: 'idle',
     context: {
         ui: {
             root: document.getElementById('route')!,
@@ -48,27 +37,28 @@ const HomeMachine = setup({
             new BlogPost(2, "Participate Advent of Code for the third time", ["c++"], "third_attempt"),
         ],
     },
-    entry: enqueueActions(({context, enqueue}) => {
-        render(HomePageTemplate(context.posts), context.ui.root);
-        let items = Array.from(context.ui.root.querySelectorAll('section'));
-        enqueue.assign({
-            ui: {
-                root: context.ui.root,
-                items,
-            },
-        });
-    }),
     states: {
-        setup: {
-            entry: [
-                ({context, system}) => {
-                    context.ui.items.forEach(it => it.addEventListener('click', (_) => {
-                        system.get('@post').send({ type: 'render' })
-                    }));
-                },
-            ],
+        idle: {
+            on: {
+                render: {
+                    target: 'render',
+                }
+            },
         },
-        select: {},
+        render: {
+            entry: ({context, system}) => {
+                render(HomePageTemplate(context.posts), context.ui.root);
+                context.ui.root.querySelectorAll('section').forEach((item, index) => item.addEventListener('click', (_) => {
+                    let template = context.posts[index].src;
+                    (system.get('@post') as Actor<typeof PostDetailMachine>).send({ type: 'render', template });
+                }));
+            },
+            // I was try these below solutions
+            // - onDone: { target: 'idle' }
+            // - target: 'idle'
+            // only this can work
+            always: 'idle',
+        },
     }
 });
 
@@ -81,10 +71,13 @@ const PostDetailMachine = setup({
         input: {} as {
             template: string
         },
+        events: {} as AppEvents,
     },
-
+    actors: {
+        loadTemplateAsync: fromPromise(load_template_async),
+    }
 }).createMachine({
-    initial: 'setup',
+    initial: 'idle',
     context: ({ input }) => ({
         ui: {
             body: document.body,
@@ -93,17 +86,20 @@ const PostDetailMachine = setup({
         template: input.template,
     }),
     states: {
-        setup: {
-            // entry: ({context}) => {
-            //     render(html`<h1>Hello World</h1>`, context.ui.route);
-            // },
-            on: {
-                render: {
-                    actions: ({context}) => {
-                        render(html`<h1>Hello World</h1>`, context.ui.route);
-                    }
-                }
-            }
+        idle: {
+            on: { render: { target: 'render' } }
+        },
+        render: {
+            invoke: {
+                src: 'loadTemplateAsync',
+                input: ({ event }) => (assertEvent(event, 'render'), {
+                    name: event.template,
+                }),
+                onDone: {
+                    actions: ({ context, event }) => render(event.output, context.ui.route),
+                    target: 'idle',
+                },
+            },
         }
     },
 })
@@ -113,6 +109,7 @@ const RenderMachine = setup({
         context: {} as {
             ui: { body: HTMLElement, route: HTMLElement },
         },
+        events: {} as AppEvents,
     },
     actions: {
         loadUI: ({ context }, { template }: { template: HTMLTemplateResult }) => {
@@ -122,7 +119,7 @@ const RenderMachine = setup({
     actors: {
         home_page: HomeMachine,
         post_detail: PostDetailMachine,
-    }
+    },
 }).createMachine({
     initial: "home_page",
     invoke: [
@@ -136,6 +133,12 @@ const RenderMachine = setup({
             input: { template: 'sample_blog' },
         },
     ],
+    entry: [
+        ({self}) => {
+            document.querySelector('.home')?.addEventListener('click', (_) => self.send({ type: 'home_page' }));
+            document.querySelector('.detail')?.addEventListener('click', (_) => self.send({ type: 'detail_page' }));
+        },
+    ],
     context: ({}) => ({
         ui: {
             body: document.body,
@@ -143,36 +146,19 @@ const RenderMachine = setup({
         },
     }),
     states: {
-        home_page: {
-            description: "render home page which display list of blog posts",
-            invoke: {
-                src: 'home_page',
-            },
+        idle: {
             on: {
-                view: 'detail_page',
-                hello: {
-                    actions: ({ system }) => {
-                        console.log(system.get('home_detail'));
-                        console.log("you are in state `home_page` event `hello`");
-                    }
-                },
+                home_page: 'home_page',
+                detail_page: 'detail_page',
             },
+        },
+        home_page: {
+            entry: sendTo(({system}) => system.get('@home'), { type: 'render' }),
+            always: 'idle',
         },
         detail_page: {
-            invoke: {
-                src: 'post_detail',
-                input: {
-                    template: 'sample_blog',
-                },
-            },
-        },
-    },
-    on: {
-        home: {
-            target: '.home_page',
-        },
-        detail: {
-            actions: sendTo(({system}) => system.get('@post'), { type: 'render' }),
+            entry: sendTo(({system}) => system.get('@post'), { type: 'render' }),
+            always: 'idle',
         },
     },
 });
