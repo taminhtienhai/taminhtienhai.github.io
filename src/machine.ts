@@ -136,7 +136,7 @@ const RenderMachine = setup({
     entry: [
         ({self}) => {
             document.querySelector('.home')?.addEventListener('click', (_) => self.send({ type: 'home_page' }));
-            document.querySelector('.detail')?.addEventListener('click', (_) => self.send({ type: 'detail_page' }));
+            document.querySelector('.detail')?.addEventListener('click', (_) => self.send({ type: 'detail_page'  }));
         },
     ],
     context: ({}) => ({
@@ -157,7 +157,7 @@ const RenderMachine = setup({
             always: 'idle',
         },
         detail_page: {
-            entry: sendTo(({system}) => system.get('@post'), { type: 'render' }),
+            entry: sendTo(({system}) => system.get('@post'), { type: 'render', template: 'sample_blog' } as AppEvents),
             always: 'idle',
         },
     },

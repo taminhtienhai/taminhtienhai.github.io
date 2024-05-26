@@ -9,8 +9,9 @@
   "type": "module",
   "scripts": {
     "gen": "node build.mjs",
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "NODE_ENV=development vite && yarn gen",
+    "test": "NODE_ENV=development vitest",
+    "build": "NODE_ENV=development vite build --mode development",
     "release": "yarn build && yarn gen",
     "preview": "vite preview"
   },
@@ -19,11 +20,13 @@
     "@unocss/preset-attributify": "^0.60.3",
     "@unocss/preset-icons": "^0.60.3",
     "@unocss/preset-wind": "^0.60.3",
+    "dotenv": "^16.4.5",
     "marked": "^12.0.2",
     "typescript": "^5.4.5",
     "unocss": "^0.60.3",
     "vite": "^5.2.11",
-    "vite-plugin-markdown": "^2.2.0"
+    "vite-plugin-markdown": "^2.2.0",
+    "vitest": "^1.6.0"
   },
   "dependencies": {
     "lit-html": "^3.1.3",
