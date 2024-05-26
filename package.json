@@ -12,7 +12,7 @@
     "dev": "NODE_ENV=development vite && yarn gen",
     "test": "NODE_ENV=development vitest",
     "build": "NODE_ENV=development vite build --mode development",
-    "release": "yarn build && yarn gen",
+    "release": "NODE_ENV=production && vite build --mode production && yarn gen",
     "preview": "vite preview"
   },
   "devDependencies": {
