@@ -25,3 +25,11 @@ declare module '*.md' {
   // Modify below per your usage
   export { attributes, toc, html, ReactComponent, VueComponent, VueComponentWith };
 }
+
+interface ImportMetaEnv {
+  readonly VITE_BASE_URL: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv
+}

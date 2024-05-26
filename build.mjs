@@ -1,12 +1,20 @@
 import { marked } from 'marked';
-import { readFileSync, readdirSync, unlinkSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, readdirSync, unlinkSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import path from 'node:path';
 
 const SRC_DIR = 'posts';
-const OUT_DIR = 'dist/pages';
+let OUT_DIR;
+
+if (process.env.NODE_ENV == 'development') {
+    OUT_DIR = 'public';
+} else {
+    OUT_DIR = 'dist/pages';
+}
 
 // create OUT_DIR if it doesn't existed
-mkdirSync(OUT_DIR);
+if (!existsSync(OUT_DIR)) {
+    mkdirSync(OUT_DIR);
+}
 
 // cleanup OUT_DIR
 readdirSync(OUT_DIR).forEach(file => {
