@@ -1,28 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="height: 100%;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.min.css">
     <title>Harris Ta Terminal</title>
-    <link rel="stylesheet" href="index.css">
 </head>
-<body>
-    <nav flex="~ row justify-between items-center">
-        <h1 basis="auto">harris@~></h1>
+<body class="bg-#FEFCEB">
+    <nav flex="~ row justify-between items-center" px-5 class="bg-#E9EDC9">
+        <h1 basis="auto" hover:.sign:underline-amber >harris<span class="sign">@</span>~></h1>
+        <div basis="1/4"
+            class="btn home"
+            hover="bg-sky-700 text-amber underline underline-amber"
+            transition
+            self-stretch
+            flex-center
+        >
+            <span>Home</span>
+        </div>
+        <div basis="1/4"
+            class="btn detail"
+            hover="bg-sky-700 text-amber underline underline-amber"
+            transition
+            self-stretch
+            flex-center
+        >
+            <span>About</span>
+        </div>
         <input class="prompt">
-        <a basis="1/4" class="btn home" hover="bg-sky-700" transition height="100%">
-            Home
-        </a>
-        <a basis="1/4" class="btn detail" hover="bg-sky-700" transition height="100%">
-            About
-        </a>
     </nav>
     <main>
         <p>Welcome everyone that come to my blog</p>
         <br>
         <p>If you are interesting on <small class="">#java</small>, <small>#javascript</small> and specially <div class="i-mdi:language-rust"></div> <small>#rust</small>. This is the right place.</p>
     </main>
-    <section id="route" style="width: 100%; height: 100%;"></section>
+    <section id="route"
+        class="bg-gradient-to-r from-#FEFCEB to-#FBEDB8"
+        mx-auto
+        py-1
+    ></section>
 </body>
 <script type="module" src="src/app.ts"></script>
 </html>

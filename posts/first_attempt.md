@@ -12,3 +12,14 @@ Morbi quis tortor varius, rhoncus dui vel, rutrum metus. Pellentesque pretium du
 
 Phasellus viverra nisi et elit pellentesque tristique. Sed porttitor maximus elit, ac imperdiet nibh lacinia vitae. Integer ornare lorem tortor, eget consectetur lacus venenatis quis. Fusce sodales vehicula ipsum consequat pulvinar. Fusce porta hendrerit lacus, ut ullamcorper risus tincidunt et. Integer tortor lacus, ultricies id ullamcorper id, efficitur eget justo. Vestibulum maximus hendrerit volutpat. Donec imperdiet orci eu libero tempor ullamcorper. Sed nec bibendum turpis. Aenean luctus lorem dolor, vitae aliquet sapien ornare et. Praesent interdum nisl et nibh efficitur interdum. Suspendisse eget finibus ex. In eleifend, ex eu gravida mattis, mauris urna commodo quam, id blandit enim nulla in dolor. In velit leo, feugiat ac rhoncus at, porttitor eget mauris. Duis fringilla ultrices malesuada.
 
+JS Example:
+```javascript
+let sample = "sample code block";
+console.log(sample);
+```
+
+Rust Example:
+```rust
+let variable = String::from_str("sample str");
+println!("{}", variable);
+```
