@@ -1,4 +1,4 @@
-import { defineConfig, presetAttributify, presetIcons, presetWind } from 'unocss'
+import { defineConfig, presetAttributify, presetIcons, presetUno, presetTypography } from 'unocss'
 
 export default defineConfig({
     rules: [
@@ -16,12 +16,34 @@ export default defineConfig({
             color: `#${text}`
         })],
     ],
-    shortcuts: {
-        'chip': 'px-1 inline-flex items-center rounded-full text-xs font-100 bg-gray-800 text-white'
-    },
+    shortcuts: [
+        {
+            'chip': 'px-1 inline-flex items-center rounded-full text-xs font-100 bg-gray-800 text-white',
+        },
+        [/^chip-(.*)$/, ([,c]) => `px-1 rounded-full text-xs font-100 bg-${c}-800 text-white`],
+        {
+            'flex-center': 'inline-flex justify-center items-center',
+        }
+    ],
+    preflights: [
+        {
+            getCSS: ({ }) => `
+            html,
+            body {
+                min-height: 100%;
+                width: 100%;
+                margin: 0;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            `,
+        }
+    ],
     presets: [
-        presetWind(),
+        presetUno(),
         presetAttributify(),
+        presetTypography(),
         presetIcons({
             collections: {
                 mdi: () => import('@iconify-json/mdi/icons.json').then(i => i.default),
@@ -31,8 +53,10 @@ export default defineConfig({
     content: {
         pipeline: {
             include: [
-                'src/**/*.{js,ts}',
+                'src/component.ts',
                 'index.html',
+                'static/components/*.css',
+                'index.css',
             ],
         },
     },

@@ -18,11 +18,11 @@ export class BlogPost {
 }
 
 export const BlogPostTemplate = (src?: BlogPost) => html`
-    <section class="m-5 bg-#435585 text-#F5E8C7 rounded-xl px-2 py-1" hover="cursor-pointer">
+    <section class="m-5 bg-#D4A373 text-#435585 rounded-xl px-2 py-1" hover="cursor-pointer">
         <small hover="text-fuchsia" transition>2023-01-07</small>
         <h3 class="title" text-xl mt-1 >${src?.title}</h3>
         <h5 class="sub_title" text-sm my-2>${src?.sub_title}</h5>
-        <span class="tag">${repeat_template(src?.tags ?? [], (tag) => html`<i class="chip">#${tag}</i>`)}</span>
+        <span class="tag">${repeat_template(src?.tags ?? [], (tag) => html`<i class="chip-gray">#${tag}</i>`)}</span>
     </section>
 `;
 
