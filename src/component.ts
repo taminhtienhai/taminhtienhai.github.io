@@ -23,10 +23,12 @@ export class BlogPost {
  */
 export const BlogPostTemplate = (src?: BlogPost) => html`
     <section 
-        class="m-5 text-bronze-12 rounded-xl px-2 py-1"
+        class="m-5 rounded-xl px-2 py-1"
+        text="bronze-12"
         light="bg-bronze-8 text-#322B28"
         dark="bg-#3A3A4E text-#DFE0F9"
-        hover="cursor-pointer">
+        hover="cursor-pointer"
+    >
         <small hover="text-fuchsia" transition>2023-01-07</small>
         <h3 class="title" text-xl mt-1 >${src?.title}</h3>
         <h5 class="sub_title" text-sm my-2>${src?.sub_title}</h5>

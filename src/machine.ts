@@ -1,7 +1,7 @@
-import { Actor, assertEvent, createActor, fromPromise, sendTo, setup } from "xstate";
+import { Actor, assertEvent, assign, createActor, fromPromise, sendTo, setup } from "xstate";
 import { BlogPost, HomePageTemplate } from "./component";
 import { HTMLTemplateResult, render } from "lit-html";
-import { load_template_async } from "./helper";
+import { parse_json_into, load_static_json_text, load_template_async } from "./helper";
 
 type AppEvents = 
 | { type: 'render'; template: string }
@@ -24,51 +24,67 @@ const HomeMachine = setup({
             render(template, context.ui.root);
         },
     },
+    actors: {
+        loadListBlogs: fromPromise(load_static_json_text),
+    }
 }).createMachine({
-    initial: 'idle',
+    initial: 'setup',
     context: {
         ui: {
             root: document.getElementById('route')!,
             items: [],
         },
-        posts: [
-            new BlogPost(0, "Participate Advent of Code for the first time", ["rust", "js"], "first_attempt"),
-            new BlogPost(1, "Participate Advent of Code for the second time", ["python"], "second_attempt"),
-            new BlogPost(2, "Participate Advent of Code for the third time", ["c++"], "third_attempt"),
-        ],
+        posts: [],
     },
     states: {
+        setup: {
+            invoke: {
+                src: 'loadListBlogs',
+                input: { name: 'blogs' },
+                onDone: {
+                    actions: assign(({ event }) => ({ posts: parse_json_into<BlogPost>(event.output) })),
+                    target: 'render'
+                },
+            },
+        },
         idle: {
             on: {
                 render: {
                     target: 'render',
+                },
+                setup: {
+                    target: 'setup',
                 }
             },
         },
         render: {
-            entry: ({context, system}) => {
-                render(HomePageTemplate(context.posts), context.ui.root);
-                context.ui.root.querySelectorAll('section').forEach((item, index) => item.addEventListener('click', (_) => {
-                    let template = context.posts[index].src;
-                    (system.get('@post') as Actor<typeof PostDetailMachine>).send({ type: 'render', template });
-                }));
+            entry: [
+                { type: 'loadUI', params: ({ context }) => ({ template: HomePageTemplate(context.posts) }) },
+                ({context, system}) => {
+                    // setup action to each blog post
+                    context.ui.root.querySelectorAll('section').forEach((item, index) => item.addEventListener('click', (_) => {
+                        let template = context.posts[index].src;
+                        (system.get('@post') as Actor<typeof PostDetailMachine>).send({ type: 'render', template });
+                    }));
 
-                let toggle = ((className: string, defaultElement: Element) => {
-                    let lastActiveElement: Element = defaultElement;
-                    return (input: Element) => {
-                        lastActiveElement?.classList.remove(className);
-                        lastActiveElement = input;
-                        input?.classList.add(className);
-                    };
-                })('activated', document.querySelector('nav > .activated')!);
+                    // set active animation to navigation buttons
+                    let toggle = ((className: string, defaultElement: Element) => {
+                        let lastActiveElement: Element = defaultElement;
+                        return (input: Element) => {
+                            lastActiveElement?.classList.remove(className);
+                            lastActiveElement = input;
+                            input?.classList.add(className);
+                        };
+                    })('activated', document.querySelector('nav > .activated')!);
 
-                document.querySelectorAll('nav > .btn')
-                    .forEach((item) => item.addEventListener('click', (_) => toggle(item)));
-            },
-            // I was try these below solutions
+                    document.querySelectorAll('nav > .btn')
+                        .forEach((item) => item.addEventListener('click', (_) => toggle(item)));
+                }
+            ],
+            // I was try these solutions
             // - onDone: { target: 'idle' }
             // - target: 'idle'
-            // only this can work
+            // only this work
             always: 'idle',
         },
     }
@@ -116,6 +132,9 @@ const PostDetailMachine = setup({
     },
 })
 
+// my idea is have multi child states and one basement state (`idle`)
+// after a state execution successful, it always fallback to `idle` (using "always" config)
+// `idle` state provide method to navigate to its child states
 const RenderMachine = setup({
     types: {
         context: {} as {
@@ -134,6 +153,7 @@ const RenderMachine = setup({
     },
 }).createMachine({
     initial: "home_page",
+    // manage other machine references
     invoke: [
         {
             src: 'home_page',
@@ -145,6 +165,7 @@ const RenderMachine = setup({
             input: { template: 'sample_blog' },
         },
     ],
+    // setup navbar actions
     entry: [
         ({self}) => {
             document.querySelector('.landing-page')?.addEventListener('click', (_) => self.send({ type: 'home_page' }));
@@ -165,10 +186,12 @@ const RenderMachine = setup({
                 detail_page: 'detail_page',
             },
         },
+        // active `HomeMachine` by calling its reference
         home_page: {
-            entry: sendTo(({system}) => system.get('@home'), { type: 'render' }),
+            entry: sendTo(({system}) => system.get('@home'), { type: 'setup' }),
             always: 'idle',
         },
+        // active `PostDetailMachine` by calling its reference
         detail_page: {
             entry: sendTo(({system}) => system.get('@post'), { type: 'render', template: 'sample_blog' } as AppEvents),
             always: 'idle',
