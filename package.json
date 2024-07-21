@@ -22,7 +22,6 @@
     "@unocss/preset-icons": "^0.61.5",
     "@unocss/preset-typography": "^0.61.5",
     "@unocss/preset-wind": "^0.61.5",
-    "dotenv": "^16.4.5",
     "highlight.js": "^11.10.0",
     "marked": "^13.0.2",
     "marked-highlight": "^2.1.3",
