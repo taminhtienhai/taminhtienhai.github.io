@@ -25,4 +25,3 @@ public
 *.njsproj
 *.sln
 *.sw?
-yarn.lock
