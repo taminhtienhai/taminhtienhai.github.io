@@ -52,6 +52,18 @@ const HomeMachine = setup({
                     let template = context.posts[index].src;
                     (system.get('@post') as Actor<typeof PostDetailMachine>).send({ type: 'render', template });
                 }));
+
+                let toggle = ((className: string, defaultElement: Element) => {
+                    let lastActiveElement: Element = defaultElement;
+                    return (input: Element) => {
+                        lastActiveElement?.classList.remove(className);
+                        lastActiveElement = input;
+                        input?.classList.add(className);
+                    };
+                })('activated', document.querySelector('nav > .activated')!);
+
+                document.querySelectorAll('nav > .btn')
+                    .forEach((item) => item.addEventListener('click', (_) => toggle(item)));
             },
             // I was try these below solutions
             // - onDone: { target: 'idle' }
@@ -135,6 +147,7 @@ const RenderMachine = setup({
     ],
     entry: [
         ({self}) => {
+            document.querySelector('.landing-page')?.addEventListener('click', (_) => self.send({ type: 'home_page' }));
             document.querySelector('.home')?.addEventListener('click', (_) => self.send({ type: 'home_page' }));
             document.querySelector('.detail')?.addEventListener('click', (_) => self.send({ type: 'detail_page'  }));
         },
