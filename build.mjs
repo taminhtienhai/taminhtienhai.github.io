@@ -4,8 +4,9 @@ import path from 'node:path';
 import hljs from 'highlight.js';
 import { markedHighlight } from "marked-highlight";
 
-const SRC_DIR = 'posts';
 let OUT_DIR;
+const BLOG_DIR = 'static/markdown';
+const META_DIR = 'static/meta';
 
 if (process.env.NODE_ENV == 'development') {
     OUT_DIR = 'public';
@@ -35,12 +36,22 @@ const marked = new Marked(
 );
 
 // read SRC_DIR and generate html to OUT_DIR
-readdirSync(SRC_DIR)
+readdirSync(BLOG_DIR)
 .filter(f => f.endsWith('.md'))
 .forEach(f => {
     let filename = f.split('.')[0];
-    let buf = readFileSync(path.join(SRC_DIR, f));
+    let buf = readFileSync(path.join(BLOG_DIR, f));
     let content = marked.parse(buf.toString('utf8'));
     let file_des = path.join(OUT_DIR, filename + '.html');
+    writeFileSync(file_des, content);
+});
+
+readdirSync(META_DIR)
+.filter(f => f.endsWith('.json'))
+.forEach(f => {
+    let filename = f.split('.')[0];
+    let buf = readFileSync(path.join(META_DIR, f));
+    let content = buf.toString('utf8');
+    let file_des = path.join(OUT_DIR, filename + '.json');
     writeFileSync(file_des, content);
 });
