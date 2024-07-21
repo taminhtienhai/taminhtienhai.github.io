@@ -1,4 +1,5 @@
 import { defineConfig, presetAttributify, presetIcons, presetUno, presetTypography } from 'unocss'
+import { presetRadix } from "unocss-preset-radix";
 
 export default defineConfig({
     rules: [
@@ -18,9 +19,9 @@ export default defineConfig({
     ],
     shortcuts: [
         {
-            'chip': 'px-1 inline-flex items-center rounded-full text-xs font-100 bg-gray-800 text-white',
+            'chip': 'px-1 inline-flex items-center rounded-full text-xs font-100 text-white',
         },
-        [/^chip-(.*)$/, ([,c]) => `px-1 rounded-full text-xs font-100 bg-${c}-800 text-white`],
+        [/^chip-(.*)$/, ([, c]) => `px-1 rounded-full text-xs font-100 bg-#EDECEC text-${c}`],
         {
             'flex-center': 'inline-flex justify-center items-center',
         }
@@ -47,8 +48,12 @@ export default defineConfig({
         presetIcons({
             collections: {
                 mdi: () => import('@iconify-json/mdi/icons.json').then(i => i.default),
+                msb: () => import('@iconify-json/material-symbols/icons.json').then(i => i.default),
             }
-        })
+        }),
+        presetRadix({
+            palette: ["bronze", "plum", "iris", "amber", "sand", "mauve", "gray", "blue"],
+        }),
     ],
     content: {
         pipeline: {
@@ -57,6 +62,7 @@ export default defineConfig({
                 'index.html',
                 'static/components/*.css',
                 'index.css',
+                'uno.config.js',
             ],
         },
     },
