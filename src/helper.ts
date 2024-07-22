@@ -11,10 +11,13 @@ export function repeat_template<T>(items: Array<T>, template: (input: T) => HTML
 const TEMPLATES: Record<string, DirectiveResult<typeof UnsafeHTMLDirective>> = {};
 const JSON_STATIC_FILES: Record<string, string> = {};
 
+const HTML_URL = `${import.meta.env.VITE_BASE_URL}/page`;
+const JSON_URL = `${import.meta.env.VITE_BASE_URL}/json`
+
 export async function load_template_async({input: { name }}: {input: { name: string }}) {
     // look at the cache first
     if (TEMPLATES[name]) { return html`${TEMPLATES[name]}`; }
-    let url = `${import.meta.env.VITE_BASE_URL}/${name}.html`;
+    let url = `${HTML_URL}/${name}.html`;
     
     return fetch(url)
         .then(res => res.text())
@@ -28,7 +31,7 @@ export async function load_template_async({input: { name }}: {input: { name: str
 export async function load_static_json_text({input: { name }}: {input: { name: string }}) {
     // look at the cache first
     if (JSON_STATIC_FILES[name]) { return JSON_STATIC_FILES[name]; }
-    let url = `${import.meta.env.VITE_BASE_URL}/${name}.json`;
+    let url = `${JSON_URL}/${name}.json`;
 
     return fetch(url)
         .then(res => res.text())

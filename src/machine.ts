@@ -3,7 +3,7 @@ import { BlogPost, HomePageTemplate } from "./component";
 import { HTMLTemplateResult, render } from "lit-html";
 import { parse_json_into, load_static_json_text, load_template_async } from "./helper";
 
-type AppEvents = 
+export type AppEvents =
 | { type: 'render'; template: string }
 | { type: 'home_page' }
 | { type: 'detail_page' };
@@ -53,6 +53,7 @@ const HomeMachine = setup({
                     target: 'render',
                 },
                 setup: {
+
                     target: 'setup',
                 }
             },
