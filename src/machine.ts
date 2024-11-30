@@ -1,14 +1,18 @@
 import { type Actor, assertEvent, assign, createActor, fromPromise, sendTo, setup } from "xstate";
-import { type BlogPost, HomePageTemplate } from "./component";
+import { type BlogPost, BlogTemplate, MeTemplate, PostDetailTemplate } from "./component";
 import { type HTMLTemplateResult, render } from "lit-html";
 import { parse_json_into, load_json_text, load_template } from "./helper";
 
 export type AppEvents =
-| { type: 'render'; template: string }
-| { type: 'home_page' }
-| { type: 'detail_page' };
+| { type: 'render'; template?: string }
+| { type: 'setup'; }
+| { type: 'blog_post_page' }
+| { type: 'blog_post_list' }
+| { type: 'about_page' }
+| { type: 'me_page' };
 
-const HomeMachine = setup({
+
+const BlogPostMachine = setup({
     types: {
         context: {} as {
             ui: {
@@ -28,7 +32,7 @@ const HomeMachine = setup({
         loadListBlogs: fromPromise(load_json_text),
     }
 }).createMachine({
-    initial: 'setup',
+    initial: 'idle',
     context: {
         ui: {
             root: document.getElementById('route')!,
@@ -53,18 +57,17 @@ const HomeMachine = setup({
                     target: 'render',
                 },
                 setup: {
-
                     target: 'setup',
-                }
+                },
             },
         },
         render: {
             entry: [
                 // ({ context }) => render(HomePageTemplate(context.posts), context.ui.root),
-                { type: 'loadUI', params: ({ context }) => ({ template: HomePageTemplate(context.posts) }) },
+                { type: 'loadUI', params: ({ context }) => ({ template: BlogTemplate(context.posts) }) },
                 ({context, system}) => {
                     // setup action to each blog post
-                    context.ui.root.querySelectorAll('section').forEach((item, index) => item.addEventListener('click', (_) => {
+                    context.ui.root.querySelectorAll('.blog-post-item').forEach((item, index) => item.addEventListener('click', (_) => {
                         const template = context.posts[index].src;
                         (system.get('@post') as Actor<typeof PostDetailMachine>).send({ type: 'render', template });
                     }));
@@ -117,7 +120,9 @@ const PostDetailMachine = setup({
     }),
     states: {
         idle: {
-            on: { render: { target: 'render' } }
+            on: {
+                render: { target: 'render' },
+            },
         },
         render: {
             invoke: {
@@ -126,13 +131,42 @@ const PostDetailMachine = setup({
                     name: event.template,
                 }),
                 onDone: {
-                    actions: ({ context, event }) => render(event.output, context.ui.route),
+                    actions: ({ context, event }) => render(PostDetailTemplate(event.output), context.ui.route),
                     target: 'idle',
                 },
             },
         }
     },
-})
+});
+
+const MeMachine = setup({
+    types: {
+        context: {} as {
+            ui: { body: HTMLElement, route: HTMLElement }
+        },
+        events: {} as AppEvents,
+    },
+    actors: {},
+}).createMachine({
+    initial: 'idle',
+    context: ({}) => ({
+        ui: {
+            body: document.body,
+            route: document.getElementById('route')!,
+        },
+    }),
+    states: {
+        idle: {
+            on: {
+                render: { target: 'render' },
+            }
+        },
+        render: {
+            entry: ({ context }) => render(MeTemplate(), context.ui.route),
+            always: 'idle',
+        },
+    }
+});
 
 // my idea is have multi child states and one basement state (`idle`)
 // after a state execution successful, it always fallback to `idle` (using "always" config)
@@ -150,29 +184,35 @@ const RenderMachine = setup({
         },
     },
     actors: {
-        home_page: HomeMachine,
+        blog_post_page: BlogPostMachine,
+        me_page: MeMachine,
         post_detail: PostDetailMachine,
     },
 }).createMachine({
-    initial: "home_page",
+    initial: "me_page",
     // manage other machine references
     invoke: [
         {
-            src: 'home_page',
-            systemId: '@home',
+            systemId: '@me',
+            src: 'me_page',
         },
         {
-            src: 'post_detail',
+            systemId: '@blogpost',
+            src: 'blog_post_page',
+        },
+        {
             systemId: '@post',
+            src: 'post_detail',
             input: { template: 'sample_blog' },
         },
     ],
     // setup navbar actions
     entry: [
         ({self}) => {
-            document.querySelector('.landing-page')?.addEventListener('click', (_) => self.send({ type: 'home_page' }));
-            document.querySelector('.home')?.addEventListener('click', (_) => self.send({ type: 'home_page' }));
-            document.querySelector('.detail')?.addEventListener('click', (_) => self.send({ type: 'detail_page'  }));
+            document.querySelector('.landing-page')?.addEventListener('click', (_) => self.send({ type: 'me_page' }));
+            document.querySelector('.blog')?.addEventListener('click', (_) => self.send({ type: 'blog_post_page' }));
+            document.querySelector('.me')?.addEventListener('click', (_) => self.send({ type: 'me_page' }));
+            document.querySelector('.detail')?.addEventListener('click', (_) => self.send({ type: 'about_page' }));
         },
     ],
     context: ({}) => ({
@@ -184,17 +224,20 @@ const RenderMachine = setup({
     states: {
         idle: {
             on: {
-                home_page: 'home_page',
-                detail_page: 'detail_page',
+                blog_post_page: 'blog_post_page',
+                me_page: 'me_page',
+                about_page: 'about_page',
             },
         },
-        // active `HomeMachine` by calling its reference
-        home_page: {
-            entry: sendTo(({system}) => system.get('@home'), { type: 'setup' }),
+        me_page: {
+            entry: sendTo(({system}) => system.get('@me'), { type: 'render' }),
             always: 'idle',
         },
-        // active `PostDetailMachine` by calling its reference
-        detail_page: {
+        blog_post_page: {
+            entry: sendTo(({system}) => system.get('@blogpost'), { type: 'setup' }),
+            always: 'idle',
+        },
+        about_page: {
             entry: sendTo(({system}) => system.get('@post'), { type: 'render', template: 'sample_blog' } as AppEvents),
             always: 'idle',
         },

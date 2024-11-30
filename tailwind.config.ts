@@ -10,7 +10,12 @@ export default {
   ],
 
   theme: {
-    extend: {}
+    fontFamily: {
+      sans: 'Pixelify Sans, Helvetica, Arial, sans-serif',
+      serif: 'VT323, ui-serif, Georgia',
+      mono: 'JetBrains Mono, ui-monospace, SFMono-Regular'
+    },
+    extend: {},
   },
   daisyui: {
     themes: ['light', 'dark'],
@@ -18,6 +23,6 @@ export default {
   plugins: [
     typography,
     daisy,
-    addIconSelectors(['mdi', 'material-symbols']),
+    addIconSelectors(['mdi', 'material-symbols', 'jam']),
   ],
 } satisfies Config;

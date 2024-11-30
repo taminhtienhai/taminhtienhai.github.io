@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@iconify-json/jam": "^1.2.1",
     "@iconify-json/material-symbols": "1.2.8",
     "@iconify-json/mdi": "1.2.1",
     "@iconify/tailwind": "^1.1.3",

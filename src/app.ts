@@ -2,8 +2,6 @@ import { $Renderer } from './machine';
 
 $Renderer.start();
 
-
-
 document.getElementById('theme-switcher')?.addEventListener('click', (_) => {
     if (document.documentElement.classList.contains('light')) {
         document.documentElement.classList.remove('light');
