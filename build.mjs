@@ -54,9 +54,10 @@ console.log('start parse markdown..');
 readdirSync(BLOG_DIR)
 .filter(f => f.endsWith('.md'))
 .forEach(f => {
+    const filename = f.split('.')[0];
     const buf = readFileSync(path.join(BLOG_DIR, f));
     const content = marked.parse(buf.toString('utf8'));
-    const file_des = path.join(`${OUT_DIR}/page`, f);
+    const file_des = path.join(`${OUT_DIR}/page`,`${filename}.html`);
     writeFileSync(file_des, content);
 });
 
