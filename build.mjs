@@ -1,13 +1,14 @@
 import { Marked } from 'marked';
-import { readFileSync, readdirSync, unlinkSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
+import { readFileSync, readdirSync, unlinkSync, writeFileSync, mkdirSync, existsSync, copyFileSync } from "node:fs";
 import path from 'node:path';
 import hljs from 'highlight.js';
 import { markedHighlight } from "marked-highlight";
 
 let OUT_DIR;
-const SUB_DIRS = ['page','json'];
+const SUB_DIRS = ['page','json','img'];
 const BLOG_DIR = 'static/markdown';
 const META_DIR = 'static/meta';
+const IMG_DIR = 'static/img';
 
 if (process.env.NODE_ENV === 'development') {
     OUT_DIR = 'public';
@@ -49,22 +50,29 @@ const marked = new Marked(
 );
 
 // read SRC_DIR and generate html to OUT_DIR
+console.log('start parse markdown..');
 readdirSync(BLOG_DIR)
 .filter(f => f.endsWith('.md'))
 .forEach(f => {
-    const filename = f.split('.')[0];
     const buf = readFileSync(path.join(BLOG_DIR, f));
     const content = marked.parse(buf.toString('utf8'));
-    const file_des = path.join(`${OUT_DIR}/page`, `${filename}.html`);
+    const file_des = path.join(`${OUT_DIR}/page`, f);
     writeFileSync(file_des, content);
 });
 
+console.log('copy static metadata..');
 readdirSync(META_DIR)
 .filter(f => f.endsWith('.json'))
 .forEach(f => {
-    const filename = f.split('.')[0];
-    const buf = readFileSync(path.join(META_DIR, f));
-    const content = buf.toString('utf8');
-    const file_des = path.join(`${OUT_DIR}/json`, `${filename}.json`);
-    writeFileSync(file_des, content);
+    const src_des = path.join(META_DIR, f);
+    const file_des = path.join(`${OUT_DIR}/json`, f);
+    copyFileSync(src_des, file_des)
+});
+
+console.log('copy static images..');
+readdirSync(IMG_DIR)
+.forEach(image => {
+    const src_des = path.join(IMG_DIR, image);
+    const file_des = path.join(`${OUT_DIR}/img`, image);
+    copyFileSync(src_des, file_des)
 });

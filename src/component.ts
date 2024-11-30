@@ -60,7 +60,7 @@ export const PostDetailTemplate = (content: string) => html`
 export const MeTemplate = () => html`
 <section class="card card-side bg-base-100 shadow-xl">
     <figure class="w-24 rounded-sm">
-        <img src="/imgs/avatar_20241130.png" alt="my_avatar">
+        <img src="/img/avatar_20241130.png" alt="my_avatar">
     </figure>
     <aside class="card-body">
         <span class="iconify jam--sword-f text-red-200"></span>
