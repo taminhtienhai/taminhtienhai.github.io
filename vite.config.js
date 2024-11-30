@@ -1,15 +1,15 @@
-import UnoCSS from "unocss/vite";
 import { defineConfig } from "vite";
 import { plugin as MDPlugin } from "vite-plugin-markdown";
-import { resolve } from 'path';
+import { resolve } from 'node:path';
+import { ViteMinifyPlugin } from 'vite-plugin-minify'
 
 export default defineConfig({
     base: '/',
     plugins: [
-        UnoCSS(),
         MDPlugin({
             mode: 'html',
         }),
+        ViteMinifyPlugin({}),
     ],
     build: {
         rollupOptions: {
