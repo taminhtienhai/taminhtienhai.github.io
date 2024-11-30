@@ -1,7 +1,7 @@
-import { Actor, assertEvent, assign, createActor, fromPromise, sendTo, setup } from "xstate";
-import { BlogPost, HomePageTemplate } from "./component";
-import { HTMLTemplateResult, render } from "lit-html";
-import { parse_json_into, load_static_json_text, load_template_async } from "./helper";
+import { type Actor, assertEvent, assign, createActor, fromPromise, sendTo, setup } from "xstate";
+import { type BlogPost, HomePageTemplate } from "./component";
+import { type HTMLTemplateResult, render } from "lit-html";
+import { parse_json_into, load_json_text, load_template } from "./helper";
 
 export type AppEvents =
 | { type: 'render'; template: string }
@@ -25,7 +25,7 @@ const HomeMachine = setup({
         },
     },
     actors: {
-        loadListBlogs: fromPromise(load_static_json_text),
+        loadListBlogs: fromPromise(load_json_text),
     }
 }).createMachine({
     initial: 'setup',
@@ -60,16 +60,17 @@ const HomeMachine = setup({
         },
         render: {
             entry: [
+                // ({ context }) => render(HomePageTemplate(context.posts), context.ui.root),
                 { type: 'loadUI', params: ({ context }) => ({ template: HomePageTemplate(context.posts) }) },
                 ({context, system}) => {
                     // setup action to each blog post
                     context.ui.root.querySelectorAll('section').forEach((item, index) => item.addEventListener('click', (_) => {
-                        let template = context.posts[index].src;
+                        const template = context.posts[index].src;
                         (system.get('@post') as Actor<typeof PostDetailMachine>).send({ type: 'render', template });
                     }));
 
                     // set active animation to navigation buttons
-                    let toggle = ((className: string, defaultElement: Element) => {
+                    const toggle = ((className: string, defaultElement: Element) => {
                         let lastActiveElement: Element = defaultElement;
                         return (input: Element) => {
                             lastActiveElement?.classList.remove(className);
@@ -103,7 +104,7 @@ const PostDetailMachine = setup({
         events: {} as AppEvents,
     },
     actors: {
-        loadTemplateAsync: fromPromise(load_template_async),
+        loadTemplateAsync: fromPromise(load_template),
     }
 }).createMachine({
     initial: 'idle',

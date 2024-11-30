@@ -1,59 +1,59 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en" class="dark" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.min.css">
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="style.css">
     <title>Harris Ta Terminal</title>
 </head>
-<body light="bg-#eae2dc" dark="bg-gradient-to-t bg-gradient-from-[#150F16] bg-gradient-to-[#252537]">
+<body>
     <nav 
-        class="px-5 top-0 w-full"
-        light="bg-bronze-4 text-bronze-12"
-        dark="bg-transparent text-#B3B4CB"
-        flex="~ row justify-between items-center" 
+        class="
+        px-5 top-0 w-full
+        flex-row justify-between items-center
+        "
     >
-        <h1 class="btn-branch landing-page" basis="auto group">harris<span class="sign group-hover:text-white">@</span>~></h1>
+        <h1 class="
+        btn-branch landing-page
+        basis-auto group
+        ">harris</span><span class=" group-hover:text-white">@</span>~></h1>
         <div 
-            class="activated btn home transition-all self-stretch flex-center"
-            basis="1/4"
-            hover="text-bronze-11 underline-5"
+            class="
+            activated btn home transition-all self-stretch flex-center
+            basis-1/4
+            hover:underline-5
+            "
         >
             <span>HOME</span>
         </div>
         <div 
-            class="btn detail transition-all self-stretch flex-center"
-            basis="1/4" 
-            hover="text-bronze-11 underline-5"
+            class="
+            btn detail transition-all self-stretch flex-center
+            basis-1/4
+            hover:text-yellow-11 hover:underline-5
+            "
         >
             <span>ABOUT</span>
         </div>
         <label class="inline-flex items-center cursor-pointer">
-            <input id="theme-switcher" type="checkbox" value="" class="sr-only peer">
-            <div
-                dark="bg-gray-7"
-                light="bg-white"
-                class="relative w-11 h-6 rounded-full 
-                    after:content-[''] after:i-msb:sunny dark:after:i-msb:dark-mode-rounded"
-                peer-checked:after="border-white bg-white translate-x-full"
-                peer-checked="bg-gray-10"
-                peer-focus="ring-4 dark:peer-focus:ring-blue-8"
-                after="absolute top-0.5 start-[2px] bg-amber-9 border rounded-full h-5 w-5 transition-all"
-            ></div>
+            <input id="theme-switcher" type="checkbox" value="light"
+                class="
+                toggle theme-controller peer
+                relative w-11 h-6 rounded-full 
+                after:content-[''] after:i-msb:sunny dark:after:i-msb:dark-mode-rounded
+                "
+            />
         </label>
     </nav>
-    <section 
-        class="container"
-        light="text-black"
-        dark="text-#DFE0F9">
-        <p>Welcome everyone that come to my blog</p>
+    <section class="pl-10%">
+        <h1>Welcome everyone that come to my blog</h1>
         <br>
-        <p>If you are interesting on <small class="">#java</small>, <small>#javascript</small> and specially <div class="i-mdi:language-rust"></div> <small>#rust</small>. This is the right place.</p>
+        <p>If you are interesting on <small class="">#java</small>, <small>#javascript</small> and specially <span class="iconify mdi--language-rust"></span> <small>#rust</small>. This is the right place.</p>
     </section>
     <section
         id="route"
-        class="mx-auto py-1 container"
+        class="mx-auto py-1"
         light="bg-#eae2dc"
         dark="bg-transparent text-#B4B3BD"
     ></section>

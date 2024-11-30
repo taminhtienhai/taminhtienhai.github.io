@@ -9,7 +9,7 @@ const SUB_DIRS = ['page','json'];
 const BLOG_DIR = 'static/markdown';
 const META_DIR = 'static/meta';
 
-if (process.env.NODE_ENV == 'development') {
+if (process.env.NODE_ENV === 'development') {
     OUT_DIR = 'public';
 } else {
     OUT_DIR = 'dist';
@@ -31,7 +31,7 @@ SUB_DIRS.forEach((sub) => {
 SUB_DIRS.forEach((sub) => {
     const directory = `${OUT_DIR}/${sub}`;
     readdirSync(directory).forEach(file => {
-        let file_des = path.join(directory, file);
+        const file_des = path.join(directory, file);
         unlinkSync(file_des);
     });
 })
@@ -42,7 +42,8 @@ const marked = new Marked(
         langPrefix: 'hljs language-',
         highlight(code, lang, info) {
             const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-            return hljs.highlight(code, { language }).value;
+            const highlighted = hljs.highlight(code, { language }).value;
+            return `<div class="mockup-code">${highlighted}</div>`;
         }
     })
 );
@@ -51,19 +52,19 @@ const marked = new Marked(
 readdirSync(BLOG_DIR)
 .filter(f => f.endsWith('.md'))
 .forEach(f => {
-    let filename = f.split('.')[0];
-    let buf = readFileSync(path.join(BLOG_DIR, f));
-    let content = marked.parse(buf.toString('utf8'));
-    let file_des = path.join(`${OUT_DIR}/page`, filename + '.html');
+    const filename = f.split('.')[0];
+    const buf = readFileSync(path.join(BLOG_DIR, f));
+    const content = marked.parse(buf.toString('utf8'));
+    const file_des = path.join(`${OUT_DIR}/page`, `${filename}.html`);
     writeFileSync(file_des, content);
 });
 
 readdirSync(META_DIR)
 .filter(f => f.endsWith('.json'))
 .forEach(f => {
-    let filename = f.split('.')[0];
-    let buf = readFileSync(path.join(META_DIR, f));
-    let content = buf.toString('utf8');
-    let file_des = path.join(`${OUT_DIR}/json`, filename + '.json');
+    const filename = f.split('.')[0];
+    const buf = readFileSync(path.join(META_DIR, f));
+    const content = buf.toString('utf8');
+    const file_des = path.join(`${OUT_DIR}/json`, `${filename}.json`);
     writeFileSync(file_des, content);
 });

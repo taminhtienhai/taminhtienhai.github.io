@@ -2,12 +2,13 @@ import { html } from "lit-html";
 import { repeat_template } from "./helper";
 
 export class BlogPost {
-    id: number = 0;
-    title: string = "";
-    sub_title: string = "";
+    id = 0;
+    title = "";
+    sub_title = "";
     tags: string[] = [];
-    description: string = "";
-    src: string = "";
+    brief =  "";
+    description = "";
+    src = "";
 
     constructor(id: number, title: string, tags: string[] = [], src = "") {
         this.id = id;
@@ -23,16 +24,19 @@ export class BlogPost {
  */
 export const BlogPostTemplate = (src?: BlogPost) => html`
     <section 
-        class="m-5 rounded-xl px-2 py-1"
-        text="bronze-12"
-        light="bg-bronze-8 text-#322B28"
-        dark="bg-#3A3A4E text-#DFE0F9"
-        hover="cursor-pointer"
+        class="
+        card card-compact bg-base-300 shadow-xl
+        m-5 rounded-xl px-2 py-1 cursor-pointer
+        "
     >
-        <small hover="text-fuchsia" transition>2023-01-07</small>
-        <h3 class="title" text-xl mt-1 >${src?.title}</h3>
-        <h5 class="sub_title" text-sm my-2>${src?.sub_title}</h5>
-        <span class="tag">${repeat_template(src?.tags ?? [], (tag) => html`<i light="chip-#331A37" dark="chip-#6C6D82">#${tag}</i>`)}</span>
+        <small class="hover:text-fuchsia-300 transition">2023-01-07</small>
+        <h3 class="card-title title mt-1">${src?.title}</h3>
+        <h5 class="text-sm my-2">${src?.sub_title}</h5>
+        <span>
+        ${repeat_template(
+            src?.tags ?? [],
+            (tag) => html`<i class="badge badge-outline text-xs">#${tag}</i>`)}
+        </span>
     </section>
 `;
 

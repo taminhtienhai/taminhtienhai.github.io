@@ -1,7 +1,7 @@
-import { HTMLTemplateResult, html } from "lit-html";
-import { DirectiveResult } from "lit-html/directive.js";
+import { type HTMLTemplateResult, html } from "lit-html";
+import type { DirectiveResult } from "lit-html/directive.js";
 import { repeat } from "lit-html/directives/repeat.js";
-import { UnsafeHTMLDirective, unsafeHTML } from "lit-html/directives/unsafe-html.js";
+import { type UnsafeHTMLDirective, unsafeHTML } from "lit-html/directives/unsafe-html.js";
 
 export function repeat_template<T>(items: Array<T>, template: (input: T) => HTMLTemplateResult): HTMLTemplateResult {
     let id = 0;
@@ -14,10 +14,10 @@ const JSON_STATIC_FILES: Record<string, string> = {};
 const HTML_URL = `${import.meta.env.VITE_BASE_URL}/page`;
 const JSON_URL = `${import.meta.env.VITE_BASE_URL}/json`
 
-export async function load_template_async({input: { name }}: {input: { name: string }}) {
+export async function load_template({input: { name }}: {input: { name: string }}) {
     // look at the cache first
     if (TEMPLATES[name]) { return html`${TEMPLATES[name]}`; }
-    let url = `${HTML_URL}/${name}.html`;
+    const url = `${HTML_URL}/${name}.html`;
     
     return fetch(url)
         .then(res => res.text())
@@ -28,10 +28,10 @@ export async function load_template_async({input: { name }}: {input: { name: str
         .catch(err => html`An error occur during fetching template: ${err}`);
 }
 
-export async function load_static_json_text({input: { name }}: {input: { name: string }}) {
+export async function load_json_text({input: { name }}: {input: { name: string }}) {
     // look at the cache first
     if (JSON_STATIC_FILES[name]) { return JSON_STATIC_FILES[name]; }
-    let url = `${JSON_URL}/${name}.json`;
+    const url = `${JSON_URL}/${name}.json`;
 
     return fetch(url)
         .then(res => res.text())
