@@ -1,5 +1,5 @@
 import { type Actor, assertEvent, assign, createActor, fromPromise, sendTo, setup } from "xstate";
-import { type BlogPost, BlogTemplate, MeTemplate, PostDetailTemplate } from "./component";
+import { AbilityPanel, type BlogPost, BlogTemplate, MeStore, MeTemplate, PostDetailTemplate } from "./component";
 import { type HTMLTemplateResult, render } from "lit-html";
 import { parse_json_into, load_json_text, load_template } from "./helper";
 
@@ -142,14 +142,15 @@ const PostDetailMachine = setup({
 const MeMachine = setup({
     types: {
         context: {} as {
-            ui: { body: HTMLElement, route: HTMLElement }
+            ui: { body: HTMLElement, route: HTMLElement },
+
         },
         events: {} as AppEvents,
     },
     actors: {},
 }).createMachine({
     initial: 'idle',
-    context: ({}) => ({
+    context: (_) => ({
         ui: {
             body: document.body,
             route: document.getElementById('route')!,
@@ -162,8 +163,12 @@ const MeMachine = setup({
             }
         },
         render: {
-            entry: ({ context }) => render(MeTemplate(), context.ui.route),
-            always: 'idle',
+            entry: [
+                ({ context }) => render(MeTemplate(), context.ui.route),
+                // render init content
+                () => MeStore.send({ type: 'ability' }),
+            ],
+            always: 'idle'
         },
     }
 });
@@ -215,7 +220,7 @@ const RenderMachine = setup({
             document.querySelector('.detail')?.addEventListener('click', (_) => self.send({ type: 'about_page' }));
         },
     ],
-    context: ({}) => ({
+    context: (_) => ({
         ui: {
             body: document.body,
             route: document.getElementById('route')!,

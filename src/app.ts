@@ -1,6 +1,6 @@
 import { $Renderer } from './machine';
 
-$Renderer.start();
+const App = $Renderer.start();
 
 document.getElementById('theme-switcher')?.addEventListener('click', (_) => {
     if (document.documentElement.classList.contains('light')) {
@@ -11,4 +11,6 @@ document.getElementById('theme-switcher')?.addEventListener('click', (_) => {
         document.documentElement.classList.remove('dark');
         document.documentElement.classList.add('light');
     }
-})
+});
+
+export default App;
