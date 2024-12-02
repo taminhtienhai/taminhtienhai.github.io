@@ -6,14 +6,15 @@ import { addIconSelectors } from '@iconify/tailwind';
 export default {
   content: [
     "./index.html",
+    "./build.mjs",
     "./src/**/*.{js,ts}",
   ],
 
   theme: {
     fontFamily: {
-      sans: 'Pixelify Sans, Helvetica, Arial, sans-serif',
-      serif: 'VT323, ui-serif, Georgia',
-      mono: 'JetBrains Mono, ui-monospace, SFMono-Regular'
+      'blog-content': "Poppins",
+      sans: "'Pixelify Sans', Helvetica, Arial, sans-serif",
+      mono: "'JetBrains Mono', ui-monospace, SFMono-Regular",
     },
     extend: {},
   },

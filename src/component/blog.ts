@@ -54,5 +54,11 @@ export const BlogTemplate = (posts: BlogPost[]) => html`
 `;
 
 export const PostDetailTemplate = (content: string) => html`
-    <article class="prose">${unsafeHTML(content)}</article>
+<main class="grid justify-center">
+    <article class=
+    "prose lg:prose-xl font-blog-content
+    prose-headings:font-sans
+    prose-img:cursor-zoom-in
+    ">${unsafeHTML(content)}</article>
+</main>
 `;
