@@ -44,10 +44,29 @@ const marked = new Marked(
         highlight(code, lang, info) {
             const language = hljs.getLanguage(lang) ? lang : 'plaintext';
             const highlighted = hljs.highlight(code, { language }).value;
-            return `<div class="mockup-code">${highlighted}</div>`;
+            return highlighted;
         }
     })
 );
+
+let img_count = 0;
+const img_magnify_renderer = {
+    image({ href, text }) {
+        return `
+        <img src="${href}" alt="${text}" onclick="img_magnify_${++img_count}.showModal()">
+        <dialog id="img_magnify_${img_count}" class="modal modal-backdrop">
+            <div class="modal-box p-2">
+                <img src="${href}" alt="${text}" class="w-full">
+            </div>
+            <form method="dialog" class="modal-backdrop">
+              <button>close</button>
+            </form>
+        </dialog>
+        `;
+    } 
+};
+
+marked.use({ renderer: img_magnify_renderer });
 
 // read SRC_DIR and generate html to OUT_DIR
 console.log('start parse markdown..');

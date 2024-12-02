@@ -1,7 +1,5 @@
 # Advent of Code: First Time
-
 ---
-
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque maximus risus a posuere vestibulum. Etiam sodales, neque sed tempor dictum, ante orci tristique odio, ac porta mauris augue sit amet leo. Ut maximus imperdiet ultrices. Phasellus laoreet velit a urna malesuada, a condimentum nisi tristique. Etiam a ipsum vehicula, consectetur lacus nec, eleifend ipsum. Sed imperdiet ex diam, id porta ex egestas rutrum. Phasellus pulvinar metus nisi, ut fringilla dui maximus nec. Donec ornare leo justo, vitae ornare felis cursus id. Etiam in ipsum magna. Aliquam imperdiet dictum quam sed rhoncus. Morbi nec nisl congue urna efficitur dapibus eu et ipsum.
 
 Phasellus tortor justo, vestibulum non erat non, iaculis pharetra enim. Nunc in hendrerit eros, sed dapibus risus. Quisque vitae laoreet magna, id posuere tellus. Integer a suscipit risus, in maximus lacus. In luctus aliquet purus, eget commodo neque iaculis nec. Aliquam pulvinar dolor vitae augue euismod, ut molestie mi pellentesque. Sed et nulla vehicula, venenatis eros sed, bibendum massa. Donec felis odio, pretium eu iaculis sed, maximus a sapien. Aenean bibendum quis eros in iaculis. Suspendisse ultricies id risus ac commodo. Nulla bibendum convallis nunc, a ultrices enim facilisis nec. Curabitur aliquet libero justo, quis faucibus ligula viverra et.
@@ -23,3 +21,13 @@ Rust Example:
 let variable = String::from_str("sample str");
 println!("{}", variable);
 ```
+
+Image:
+
+![Code Diagram](/img/code_diagram.webp)
+
+Table:
+
+| Column1 | Column 2 |
+| ------- | -------- |
+| hello   | world    |
