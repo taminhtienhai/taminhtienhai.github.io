@@ -16,15 +16,16 @@
 
 ## Todos
 
+- [x] deployment
 - [x] skeleton loading
+- [x] badges should have fixed color
+- [x] replace blog exact name URL with random UUID
+- [x] ~~paging load posts~~ load when srolling to bottom
+- [x] better responsive
 - [ ] enhance search functional
     - [x] tag filter
     - [ ] timeline filter
-- [ ] ~~paging load posts~~ load when srolling to bottom
-- [x] badges should have fixed color
-- [ ] better responsive
 - [ ] revamp network error ui
-- [x] replace blog exact name URL with random UUID
 - [ ] new logo - new font
 - [ ] authentication
 

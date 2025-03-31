@@ -8,36 +8,35 @@
 
     const { data } = $props();
 
-    const activeHeaderId = writable('');
-    // const tableOfContents = $derived.by(() => fetch(`/tocs/${data.title}.json`).then((res) => res.json()));
-
-    activeHeaderId.subscribe((() => {
-        let oldValue = '';
-        return (newValue) => {
-            let oldElem = document.getElementById(oldValue);
-            let newElem = document.getElementById(newValue);
-
-            oldElem?.classList.remove('active');
-            newElem?.classList.add('active');
-
-            oldValue = newValue;
-        }
-    })());
-
-    const handleScroll = (prepos: number, headings: Heading[]) => () => {
-        const scrollTop = window.scrollY + prepos;
-        const scrollBot = window.scrollY + window.innerHeight;
-
-        for (const item of headings) {
-            const element = document.getElementById(item?.id ?? '');
-            if (element && element.offsetTop >= scrollTop && element.offsetTop <= scrollBot) {
-                activeHeaderId.set(`a_${item?.id ?? '0'}`);
-                break;
-            }
-        }
-    };
 
     onMount(() => {
+        const activeHeaderId = writable('');
+        activeHeaderId.subscribe((() => {
+            let oldValue = '';
+            return (newValue) => {
+                let oldElem = window.document.getElementById(oldValue);
+                let newElem = window.document.getElementById(newValue);
+
+                oldElem?.classList.remove('active');
+                newElem?.classList.add('active');
+
+                oldValue = newValue;
+            }
+        })());
+
+        const handleScroll = (prepos: number, headings: Heading[]) => () => {
+            const scrollTop = window.scrollY + prepos;
+            const scrollBot = window.scrollY + window.innerHeight;
+
+            for (const item of headings) {
+                const element = window.document.getElementById(item?.id ?? '');
+                if (element && element.offsetTop >= scrollTop && element.offsetTop <= scrollBot) {
+                    activeHeaderId.set(`a_${item?.id ?? '0'}`);
+                    break;
+                }
+            }
+        };
+
         data.toc.then(toc => {
             window.addEventListener('scroll', handleScroll(100, toc));
         });

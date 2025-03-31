@@ -15,5 +15,5 @@ export const load = async ({ params, fetch }: Parameters<PageLoad>[0]) => fetch(
 }))
 .catch((err) => error(404, err));
 
-
+export const prerender = 'auto';
 
