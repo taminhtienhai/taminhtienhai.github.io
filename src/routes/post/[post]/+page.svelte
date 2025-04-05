@@ -1,8 +1,8 @@
 <script lang="ts">
-    import type { Heading } from '@src/lib/common/types.js';
-    import ArticleSkeleton from '@src/lib/widget/ArticleSkeleton.svelte';
-    import TableOfContent from '@src/lib/widget/TableOfContent.svelte';
-    import TocSkeleton from '@src/lib/widget/TOCSkeleton.svelte';
+    import type { Heading } from '$lib/common/types.js';
+    import ArticleSkeleton from '$lib/widget/ArticleSkeleton.svelte';
+    import TableOfContent from '$lib/widget/TableOfContent.svelte';
+    import TocSkeleton from '$lib/widget/TOCSkeleton.svelte';
     import { onMount } from 'svelte';
     import { writable } from 'svelte/store';
 
@@ -47,10 +47,19 @@
     
 </script>
 
+<svelte:head>
+    {#await data.attribute}
+    <title>Incoming...</title>
+    {:then attr}
+    <title>{attr.title}</title>
+    {/await}
+
+</svelte:head>
+
 <section class="flex pt-10">
-    <div class="flex-0 sm:flex-1 w-auto"></div>
+    <div class="flex-0 sm:flex-1 w-auto shrink"></div>
     <article class="prose sm:prose-sm md:prose
-    flex-1 sm:flex-4 md:flex-5
+    flex-1 sm:basis-4/5 lg:basis-5/6
     min-w-[60%] sm:min-w-[50%]
     px-5 sm:px-0">
         {#await data.content}

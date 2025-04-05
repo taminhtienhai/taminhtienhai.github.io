@@ -5,9 +5,11 @@ node_modules
 .vercel
 .netlify
 .wrangler
-/.svelte-kit/**/*.js
-/.svelte-kit/**/*.svelte
+/.svelte-kit/generated
 /.svelte-kit/output
+/.svelte-kit/types
+/.svelte-kit/ambient.d.ts
+/.svelte-kit/non-ambient.d.ts
 /build
 /static
 

@@ -16,7 +16,7 @@ const config = {
             fallback: 'index.html',
         }),
         alias: {
-            "@src/*": "./src/*",
+            // "@src/*": "./src/*",
         },
         prerender: {
             crawl: true,

@@ -17,7 +17,7 @@ import {
 } from '@shikijs/transformers'
 
 const OUT_DIR = 'static';
-const SUB_DIRS = ['posts','images', 'tocs', 'meta'];
+const SUB_DIRS = ['posts','images', 'tocs', 'meta', 'attrs'];
 const BLOG_DIR = 'assets/posts';
 const META_DIR = 'assets/meta';
 // const META_DIR = 'static/meta';
@@ -84,17 +84,24 @@ const marked = new Marked().use(markedShiki({
 
 
   const TOC = [];
+  let attr;
   let ID_GEN_TOK = 0;
   let ID_GEN_REN = 0;
 
   marked.use({ hooks: {
     preprocess(markdown) {
-      const { attributes, body } = fm(markdown);
-      metadata.push({ ...attributes, link });
+      let { attributes, body } = fm(markdown);
+
+      attr = { ...attributes, link };
+      metadata.push(attr);
+
       for (const prop in attributes) {
         if (prop in this.options) {
           this.options[prop] = attributes[prop];
         }
+        /// interpolate yaml's variables
+        const regex = new RegExp(`\\{${prop}\\}`, 'g');
+        body = body.replace(regex, attributes[prop]);
       }
       return body;
     },
@@ -121,6 +128,7 @@ const marked = new Marked().use(markedShiki({
    return {
     content,
     toc: TOC,
+    attr,
    };
 };
 
@@ -145,12 +153,14 @@ const jobs = readdirSync(BLOG_DIR)
 .map(async (f) => {
     const filename = nanoid();
     const buf = readFileSync(path.join(BLOG_DIR, f));
-    const { content, toc } = await parse_md(buf.toString('utf8'), md_metadatas, filename);
+    const { content, toc, attr } = await parse_md(buf.toString('utf8'), md_metadatas, filename);
     const post_des = path.join(`${OUT_DIR}/posts`,`${filename}.html`);
     const toc_des = path.join(`${OUT_DIR}/tocs`,`${filename}.json`);
+    const attr_des = path.join(`${OUT_DIR}/attrs`,`${filename}.json`);
 
     writeFileSync(post_des, content);
     writeFileSync(toc_des, JSON.stringify(toc));
+    writeFileSync(attr_des, JSON.stringify(attr));
 });
 
 Promise.all(jobs).then(() => {

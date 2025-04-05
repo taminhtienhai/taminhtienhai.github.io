@@ -1,23 +1,35 @@
 @import 'tailwindcss';
 
 @plugin '@tailwindcss/typography';
+@plugin 'tailwindcss-motion';
 @plugin 'daisyui' {
-    themes: light --default, dark --prefersdark;
+  themes: light --default, dark --prefersdark;
 }
 
 @layer utilities {
-    /* Chrome, Safari and Opera */
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
 
-    .no-scrollbar {
-      -ms-overflow-style: none; /* IE and Edge */
-      scrollbar-width: none; /* Firefox */
-    }
+  /* Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 
-    .active {
-        background-color: var(--color-base-200);
-        filter: contrast(0.8);
-    }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }
+
+  .active {
+    background-color: var(--color-base-200);
+    filter: contrast(0.8);
+  }
+
+  .text-scale-base {
+    @apply text-sm sm:text-base md:text-lg 2xl:text-xl
+  }
+
+  .text-scale-lg {
+    @apply text-lg sm:text-xl md:text-2xl 2xl:text-3xl
+  }
 }

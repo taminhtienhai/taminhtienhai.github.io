@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { findPostsByBadge } from "@src/lib/service";
-    import PostCard from "@src/lib/widget/PostCard.svelte";
-    import PostCardSkeleton from "@src/lib/widget/PostCardSkeleton.svelte";
-    import { delay } from "@src/lib/common/utils";
-    import LoadMore from "@src/lib/widget/LoadMore.svelte";
+    import { findPostsByBadge } from "$lib/service";
+    import PostCard from "$lib/widget/PostCard.svelte";
+    import PostCardSkeleton from "$lib/widget/PostCardSkeleton.svelte";
+    import { delay } from "$lib/common/utils";
+    import LoadMore from "$lib/widget/LoadMore.svelte";
     
     const { data } = $props();
 

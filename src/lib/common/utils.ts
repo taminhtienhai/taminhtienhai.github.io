@@ -23,3 +23,16 @@ export const delay = <Out>(action: () => Out, timeout: number = 1000) => {
         }, timeout);
     });
 }
+
+
+export const delay_val = <Out>(val: Out, timeout: number = 1000) => {
+    return new Promise<Out>((resolve, reject) => {
+        setTimeout(() => {
+            try {
+                resolve(val);
+            } catch (error) {
+                reject(error);                
+            }
+        }, timeout);
+    });
+}

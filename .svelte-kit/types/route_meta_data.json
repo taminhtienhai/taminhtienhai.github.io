@@ -17,5 +17,8 @@
 	"/post/[post]": [
 		"src/routes/post/[post]/+page.ts",
 		"src/routes/+layout.ts"
+	],
+	"/showcase": [
+		"src/routes/+layout.ts"
 	]
 }

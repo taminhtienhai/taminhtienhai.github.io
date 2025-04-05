@@ -13,9 +13,17 @@
 - [ ] minimize navbar when scroll content down
 - [ ] allow TOC scrolling to focusing header item
 
+## Improvements
+
+- [ ] use basis to arrange layout
+- [ ] improve search functional
+    - [ ] search ignorecase
+    - [ ] similarity search
 
 ## Todos
 
+- [ ] home page (self introduce, mini game)
+- [x] dynamic title
 - [x] deployment
 - [x] skeleton loading
 - [x] badges should have fixed color
@@ -28,8 +36,10 @@
 - [ ] revamp network error ui
 - [ ] new logo - new font
 - [ ] authentication
+- [ ] store user preferences (theme, history)
 
 ## Features
 
-- [ ] fishing game in landing page
+- [ ] fishing game in home page
 - [ ] allow registration user to comment on article
+- [ ] embedded asccinema terminal tutorial (https://docs.asciinema.org)

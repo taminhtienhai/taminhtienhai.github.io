@@ -9,7 +9,7 @@ tags:
     - '2025'
 ---
 
-# The Future of Web Development in 2025
+# {title}
 
 ## Introduction
 Web development is evolving rapidly, with new technologies shaping how developers build and deploy applications. In 2025, trends like AI-driven development, WebAssembly, and edge computing are redefining the landscape.

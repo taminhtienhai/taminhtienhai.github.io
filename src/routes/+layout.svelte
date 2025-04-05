@@ -2,8 +2,8 @@
     import type { LayoutProps } from './$types';
     import Icon from "@iconify/svelte";
     import "../app.css";
-    import SearchInput from '@src/lib/widget/SearchInput.svelte';
-    import SearchOutput from '@src/lib/widget/SearchFilter.svelte';
+    import SearchInput from '$lib/widget/SearchInput.svelte';
+    import SearchOutput from '$lib/widget/SearchFilter.svelte';
     import type { Action } from 'svelte/action';
 
     let { children }: LayoutProps = $props();
@@ -13,8 +13,7 @@
 
     const changeOnScroll: Action<HTMLElement,string[] | undefined,{}> = (node, data = ['py-0']) => {
         $effect(() => {
-            let wOffs = windowYOffset;
-            if (wOffs > 50) {
+            if (windowYOffset > 50) {
                 node.classList.add(...data);
             } else {
                 node.classList.remove(...data);
@@ -29,6 +28,9 @@
     };
 </script>
 
+<svelte:head>
+    <title>HaiTMT Blog</title>
+</svelte:head>
 <svelte:window bind:scrollY={windowYOffset} onkeydown={handleKeyboardInput}/>
 
 <nav use:changeOnScroll
@@ -67,12 +69,12 @@ shadow-sm pr-5 sticky top-0 z-50 transition-all">
             />
         </div>
     </div>
-    <div class="flex-none">
-        <ul class="menu menu-horizontal text-sm sm:text-base md:text-lg 2xl:text-xl">
+    <div class="flex gap-4">
+        <ul class="menu menu-horizontal text-scale-base">
             <li><a href="/blog">Blog</a></li>
-            <li><a href="/">About</a></li>
+            <li><a href="/showcase">Showcase</a></li>
         </ul>
-        <label class="swap swap-rotate self-center text-lg sm:text-xl md:text-2xl 2xl:text-3xl">
+        <label class="swap swap-rotate self-center h-full text-scale-lg">
             <input type="checkbox" value="light" class="theme-controller" />
             <div class="swap-on"><Icon icon="noto:sun" /></div>
             <div class="swap-off"><Icon icon="noto-v1:crescent-moon" /></div>
