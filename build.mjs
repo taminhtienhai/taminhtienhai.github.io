@@ -133,8 +133,6 @@ const marked = new Marked().use(markedShiki({
 };
 
 const md_metadatas = [];
-import { customAlphabet } from 'nanoid'
-const nanoid = customAlphabet('1234567890abcdefghizklmnopqrstuvwxyzABCDEFGHIZKLMNOPQRSTUVWXYZ', 20);
 
 console.log('copy meta files...');
 const _ = readdirSync(META_DIR)
@@ -151,7 +149,7 @@ console.log('start parse markdown..');
 const jobs = readdirSync(BLOG_DIR)
 .filter(f => f.endsWith('.md'))
 .map(async (f) => {
-    const filename = nanoid();
+    const filename = f.split('.')[0];
     const buf = readFileSync(path.join(BLOG_DIR, f));
     const { content, toc, attr } = await parse_md(buf.toString('utf8'), md_metadatas, filename);
     const post_des = path.join(`${OUT_DIR}/posts`,`${filename}.html`);
