@@ -36,3 +36,8 @@ export const delay_val = <Out>(val: Out, timeout: number = 1000) => {
         }, timeout);
     });
 }
+
+export const delay_times_of = (contents: string[], speed: number = 50, initDelay = 0) => contents.entries().reduce((acc, [idx,item]) => {
+    acc[idx] = (item.length * speed) + (acc[idx - 1] ?? initDelay) + 600;
+    return acc;
+}, Array.from<number>({ length: contents.length }))

@@ -4,6 +4,9 @@
     const timelines = ['2025','2024','2023','2022','2021'];
 </script>
 
+<svelte:head>
+    <title>HaiTMT - Blog</title>
+</svelte:head>
 
 <section class="relative">
     <aside class="absolute top-10 left-1/12">

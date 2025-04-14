@@ -5,6 +5,10 @@
     import SearchPanel from "$lib/widget/SearchFilter.svelte";
 </script>
 
+<svelte:head>
+    <title>HaiTMT - Showcase</title>
+</svelte:head>
+
 <p class="text-5xl font-bold pt-10 text-center">Component Showcase</p>
 
 <div class="divider text-2xl font-bold my-20">

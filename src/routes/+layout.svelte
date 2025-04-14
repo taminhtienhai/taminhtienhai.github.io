@@ -29,7 +29,7 @@
 </script>
 
 <svelte:head>
-    <title>HaiTMT Blog</title>
+    <title>HaiTMT - Home</title>
 </svelte:head>
 <svelte:window bind:scrollY={windowYOffset} onkeydown={handleKeyboardInput}/>
 
@@ -82,6 +82,6 @@ shadow-sm pr-5 sticky top-0 z-50 transition-all">
     </div>
 </nav>
 
-<main class="w-full min-h-screen bg-base-200">
+<main class="size-full min-h-screen bg-base-200">
     {@render children()}
 </main>

@@ -11,7 +11,8 @@
 ## Issues
 
 - [ ] minimize navbar when scroll content down
-- [ ] allow TOC scrolling to focusing header item
+- [x] allow TOC scrolling to focusing header item
+- [ ] Theme not working on mobile device
 
 ## Improvements
 
@@ -43,3 +44,9 @@
 - [ ] fishing game in home page
 - [ ] allow registration user to comment on article
 - [ ] embedded asccinema terminal tutorial (https://docs.asciinema.org)
+
+
+## What content should I place at HomePage?
+
+- [ ] tell a story about my experience
+- [ ] interactive 
