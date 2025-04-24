@@ -1,9 +1,5 @@
 import { html, type TemplateResult } from "lit-html";
-import type { Heading, TOC } from "./types";
-
-export const buildTOC = ({ title, headings }: TOC) => {
-
-};
+import type { Heading } from "./types";
 
 export class TOCNode<T> {
     value: T;

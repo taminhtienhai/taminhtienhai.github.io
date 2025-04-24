@@ -64,8 +64,9 @@
     px-5 sm:px-0">
         {#await data.content}
             <ArticleSkeleton/>
-        {:then value} 
-            {@html value}
+        {:then PostContent} 
+            <!-- {@html value} -->
+            <PostContent/>
         {:catch error}
             <p class="bg-error">{error}</p>
         {/await}
