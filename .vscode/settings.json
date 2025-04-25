@@ -9,9 +9,6 @@
         "**/._*": true,
         "node_modules/": true
     },
-    "editor.quickSuggestions": {
-        "strings": "on"
-    },
     "files.associations": {
         "*.svx": "svelte"
     },

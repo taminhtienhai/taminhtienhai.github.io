@@ -1,6 +1,6 @@
 import { type PreprocessorGroup } from 'svelte/compiler';
 import MdParser, { type MarkedState } from "./mdparser.ts";
-import path from "path";
+import * as path from "path";
 import { writeFile } from 'fs/promises';
 import { filenameOf, pathOf } from './utils.ts';
 import { kebabCase } from 'change-case';

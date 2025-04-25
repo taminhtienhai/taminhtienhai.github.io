@@ -1,7 +1,7 @@
 import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { readdirSync } from 'fs';
-import { markdownSvelte, indexesGen } from "buildsrc";
+import { markdownSvelte, indexesGen } from "build-src";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {

@@ -12,6 +12,7 @@ node_modules
 /.svelte-kit/non-ambient.d.ts
 /build
 /static
+**/*/dist
 
 # OS
 .DS_Store

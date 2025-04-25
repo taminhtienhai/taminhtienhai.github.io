@@ -1,11 +1,17 @@
 {
-  "name": "buildsrc",
-  "module": "src/index.ts",
-  "main": "src/index.ts",
+  "name": "build-src",
+  "module": "./dist/index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "type": "module",
   "version": "1.0.0",
+  "scripts": {
+    "build": "bun build.mjs"
+  },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "bun-plugin-isolated-decl": "^0.2.0",
+    "oxc-transform": "^0.66.0"
   },
   "peerDependencies": {
     "typescript": "^5"
