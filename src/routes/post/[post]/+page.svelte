@@ -66,7 +66,7 @@
             <ArticleSkeleton/>
         {:then PostContent} 
             <!-- {@html value} -->
-            <PostContent/>
+            <PostContent.default/>
         {:catch error}
             <p class="bg-error">{error}</p>
         {/await}

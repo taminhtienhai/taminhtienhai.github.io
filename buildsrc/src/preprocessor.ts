@@ -79,7 +79,6 @@ export function indexesGen(): PreprocessorGroup {
     };
     const call_once = () => {
         if (!is_called && ATTRs.length > 3) {
-            console.log(ATTRs);
             build_indexes();
             is_called = true;
         }

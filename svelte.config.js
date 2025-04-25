@@ -16,12 +16,17 @@ const config = {
         }),
         prerender: {
             crawl: true,
-            entries: readdirSync('static/posts/')
+            entries: readdirSync('static/tocs/')
                 .map(f => f.split('.')[0])
                 .map(fname => `/post/${fname}`),
         }
 	},
-
+    compilerOptions: {
+        warningFilter: (warn) => {
+            if (warn.code.startsWith('a11y')) { return false; }
+            return true;
+        }
+    },
     extensions: [".svelte", ".svx"]
 };
 
