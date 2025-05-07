@@ -21,7 +21,7 @@
         raws[raws.length - 1],
     ];
     const delays = delay_times_of(splitContents, speed, initDelay);
-    const interval_ids: number[] = Array.from({ length: splitContents.length });
+    const interval_ids: NodeJS.Timeout[] = Array.from({ length: splitContents.length });
     const positions: number[] = Array.from({ length: splitContents.length }).map(_ => 0);
 
     onMount(() => {

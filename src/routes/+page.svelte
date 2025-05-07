@@ -6,7 +6,7 @@
     let bio: HTMLDivElement;
     const contents = [
         "Hi 👋, welcome to my blog, where you can find my sharing about programming languages, life experience and ideas.",
-        "As a backend developer, I'm using Java at work but passionate with Rust when working with my hobby projects.",
+        "As a backend developer, I'm using Java at work but passionate with Rust when playing with my hobby projects.",
         "Solving challenges and explore new things keep me alive, love to reinvent the 🛞 to completely understand them.",
         "Happy reading 💗",
     ];

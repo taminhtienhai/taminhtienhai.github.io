@@ -1,5 +1,5 @@
 export const debounce_async = (timeout: number) => {
-    let timer: number;
+    let timer: NodeJS.Timeout;
     return <Out>(action: () => Out) => new Promise<Out>((resolve, reject) => {
         clearTimeout(timer);
         timer = setTimeout(() => {

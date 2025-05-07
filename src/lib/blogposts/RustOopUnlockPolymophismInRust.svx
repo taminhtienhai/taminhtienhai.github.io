@@ -46,7 +46,7 @@ class Claude implements LLM { ... } // override `bipbop`
 Hoãn lại 1 chút sự phấn khích trước khi chúng ta tìm hiểu xem Rust đã tối ưu hóa như thế nào, hãy bắt đầu từ vấn đề trước. Như đã đề cập ở trên, dynamic polymorphism xử dụng cơ chế vtable để quản lý các implementation và cho phép đoạn code sau đây xảy ra.
 
 ```java
-List<LLM> llms = Arrrays.asList(new ChatGPT(), new Gemini(), new Claude());
+List<LLM> llms = Arrays.asList(new ChatGPT(), new Gemini(), new Claude());
 
 llms.forEach(llm -> llm.bipbop());
 ```

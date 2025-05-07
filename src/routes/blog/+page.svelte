@@ -22,7 +22,7 @@
 {#each [1,2,3] as const as _}
     <PostCardSkeleton/>
 {/each}
-{:then posts} 
+{:then posts}
 {#each posts.slice(offset, limit) as post}
     <PostCard {...post}/>
 {/each}
