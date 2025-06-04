@@ -3,13 +3,14 @@ title: 'Mastering Rust: Why Its the Future of Systems Programming'
 subtitle: ''
 description: 'Rust has been gaining popularity as one of the safest and most efficient programming languages. With its focus on memory safety, performance, and concurrency, it is rapidly becoming the go-to choice for systems programming.'
 created_date: '2025-03-25'
-link: 'mastering-rust'
 tags:
     - 'rust'
     - 'programming'
 ---
 
-# Mastering Rust: Why It’s the Future of Systems Programming
+# {title}
+
+{estimate}
 
 ## Introduction
 Rust has been gaining popularity as one of the safest and most efficient programming languages. With its focus on memory safety, performance, and concurrency, it is rapidly becoming the go-to choice for systems programming.

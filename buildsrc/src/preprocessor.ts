@@ -1,18 +1,18 @@
 import { type PreprocessorGroup } from 'svelte/compiler';
-import MdParser, { type MarkedState } from "./mdparser.ts";
+import MdParser, { type MarkedState, type PostAttr } from "./mdparser.ts";
 import * as path from "path";
 import { writeFile } from 'fs/promises';
 import { filenameOf, pathOf } from './utils.ts';
 import { kebabCase } from 'change-case';
 import { writeFileSync } from 'fs';
 
-const ATTRs: Record<string, string>[] = [];
+const ATTRs: Partial<PostAttr>[] = [];
 
 export function markdownSvelte(): PreprocessorGroup {
     const OUT_DIR = 'static';
-    const SUB_DIRS = ['posts', 'images', 'tocs', 'meta', 'attrs'];
-    const BLOG_DIR = 'assets/posts';
-    const META_DIR = 'assets/meta';
+    // const SUB_DIRS = ['posts', 'images', 'tocs', 'meta', 'attrs'];
+    // const BLOG_DIR = 'assets/posts';
+    // const META_DIR = 'assets/meta';
 
     const CUSTOM_EXT = ['.svx'];
     return {
@@ -95,6 +95,26 @@ async function parseMd(marked: ReturnType<typeof MdParser>, content: string): Pr
     // ctx: svelte treat '{' & '}' as start of template token
     const output = (await marked.parse(content, { async: true }))
         .replaceAll(/{/g, "&lbrace;")
-        .replaceAll(/}/g, "&rbrace;");
-    return output;
+        .replaceAll(/}/g, "&rbrace;")
+        .replaceAll(/&lbrace;@attach copyToClipboard&rbrace;/g, "{@attach copyToClipboard}");
+    return `
+<script lang="ts">
+    import Icon from "@iconify/svelte";
+
+    function copyToClipboard(node: HTMLElement) {
+        const parent = node.parentElement;
+        const sibling = parent?.nextElementSibling;
+        const rawCode = sibling?.getAttribute('data-code') ?? '';
+        node.addEventListener('click', (_) => {
+            navigator.clipboard.writeText(rawCode);
+            node.disabled = true;
+            setTimeout(() => {
+                node.disabled = false;
+                node.checked = false;
+            }, 1000);
+        });
+    }
+</script>
+${output}
+`;
 }

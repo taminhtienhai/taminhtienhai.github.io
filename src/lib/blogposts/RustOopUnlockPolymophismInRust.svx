@@ -1,18 +1,15 @@
 ---
 title: 'Rust OOP: Unlock Polymorphism in Rust'
-subtitle: 'markdown element showcase'
+subtitle: ''
 description: 'Markdown is a lightweight markup language used to format plain text. It is widely used for documentation, writing blogs, and creating formatted content easily.'
-link: 'how-to-search-google'
-created_date: '2025-03-23'
+created_date: '2025-04-23'
 tags:
     - 'markdown'
 ---
 
-<script lang="ts">
-</script>
-
-
 # {title}
+
+{estimate}
 
 #rust #vs #java
 

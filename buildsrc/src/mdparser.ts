@@ -1,4 +1,4 @@
-import { Marked, type HooksObject, type MarkedOptions, type RendererObject, type Token } from "marked"
+import { Marked, type HooksObject, type MarkedOptions, type RendererObject, type Token, type TokenizerAndRendererExtension } from "marked"
 import { kebabCase } from "change-case";
 
 export type ToC = Array<{
@@ -7,23 +7,30 @@ export type ToC = Array<{
     text: number,
 }>;
 
+export type RTE = {
+    minutes: number,
+    words: number,
+    text: string,
+};
+
 export type Attr = Array<Record<string, string>>;
 export type IdGen = Record<string, number>;
 
 export type MarkedState = {
     filename: string,
     toc: ToC,
-    meta: Record<string, string>,
+    meta: Partial<PostAttr>,
     id_gen: IdGen,
 };
 
 export default function MdParser($state: MarkedState = {
     filename: '',
     toc: [],
-    meta: [],
+    meta: {},
     id_gen: {},
 }) {
     const marked = new Marked();
+    marked.use({ extensions: [underlineExt] });
     marked.use({
         hooks: custom_hooks($state),
         walkTokens: custom_walkTokens($state),
@@ -45,7 +52,7 @@ export default function MdParser($state: MarkedState = {
 };
 
 import markedShiki from 'marked-shiki'
-import { createHighlighter } from 'shiki'
+import { createHighlighter, type ShikiTransformer } from 'shiki'
 import {
     transformerNotationDiff,
     transformerNotationHighlight,
@@ -56,14 +63,15 @@ import {
     transformerMetaWordHighlight,
 } from '@shikijs/transformers'
 
+const highlighter = await createHighlighter({
+    langs: ['md', 'js', 'rust', 'java'],
+    themes: ['github-dark-dimmed']
+});
+
 const markedShikiExt = () => {
-    const highlighter = createHighlighter({
-        langs: ['md', 'js', 'rust', 'java'],
-        themes: ['github-dark-dimmed']
-    });
     return markedShiki({
-        async highlight(code, lang, props) {
-            const h = await highlighter;
+        highlight(code, lang, props) {
+            const h = highlighter;
             return h.codeToHtml(code, {
                 lang,
                 theme: 'github-dark-dimmed',
@@ -85,11 +93,66 @@ const markedShikiExt = () => {
                         matchAlgorithm: 'v3'
                     }),
                     transformerMetaHighlight(),
-                    transformerMetaWordHighlight()
+                    transformerMetaWordHighlight(),
+                    addCopyButton(),
                 ],
             });
-        }
+        },
+        container: `
+<figure class="highlighted-code relative">
+<label class="swap absolute top-2 right-2">
+    <input type="checkbox" {@attach copyToClipboard} />
+    <Icon class="swap-on inline-block" icon="openmoji:check-mark" width="24" height="24" />
+    <Icon class="swap-off inline-block" icon="solar:copy-broken" width="24" height="24" />
+</label>
+%s
+</figure>`
     });
+};
+
+export function addCopyButton(options = { toggle: 1000 }): ShikiTransformer {
+  const toggleMs = options.toggle || 3000
+
+  return {
+    name: 'shiki-transformer-copy-button',
+    pre(node) {
+        // @ts-ignore
+        node.properties['data-code'] = this.source;
+        node.properties['data-debounce'] = toggleMs;
+        node.properties['class'] += ' line-clamp-20 overflow-auto';
+    },
+  }
+}
+
+function callout(text: string, type: 'info' | 'warn' | 'error') {
+    const ICONs = {
+        info: 'solar:pen-line-duotone',
+        warn: 'cuida:warning-outline',
+        error: 'mdi:cross-circle-outline',
+    };
+    const BGs = {
+        info: 'bg-info/10',
+        warn: 'bg-warning/10',
+        error: 'bg-error/10',
+    };
+    const TEXTs = {
+        info: 'text-info',
+        warn: 'text-warning',
+        error: 'text-error',
+    };
+    const lines = text.split('\n').map(txt => `<p class="text-base-content/60">${txt}</p>`);
+    const icon = ICONs[type];
+    const bg = BGs[type];
+    const txt = TEXTs[type];
+    const callout = `
+<section class="not-prose card card-xs sm:card-sm md:card-sm lg:card-md xl:card-md 2xl:card-lg bg-base-100 shadow-sm mb-4">
+<div class="card-body py-2 sm:py-4 ${bg} *:leading-tight">
+    <h2 class="card-title text-lg ${txt}"><Icon class="inline" icon="${icon}"/>${type}</h2>
+    ${lines.slice(1).join('')}
+</div>
+</section>
+`;
+        return callout;
 }
 
 function custom_render($state: MarkedState): RendererObject {
@@ -101,7 +164,20 @@ function custom_render($state: MarkedState): RendererObject {
             <h${depth} id="${id_ref}" class="scroll-mt-20">
             ${text}
             </h${depth}>`
-        }
+        },
+        blockquote({ text }) {
+            const CALLOUTS = ['info', 'warn', 'error'];
+            const calloutsRegex = /^\[!([a-zA-Z]+)\]/;
+            const matches = calloutsRegex.exec(text);
+
+            const calloutTxt = matches?.[1];
+            if (matches && calloutTxt && CALLOUTS.includes(calloutTxt)) {
+                // @ts-ignore
+                return callout(text, matches[1]);
+            }
+
+            return `<blockquote>${text}</blockquote>`
+        },
     }
 }
 
@@ -123,23 +199,67 @@ function custom_walkTokens($state: MarkedState): ((token: Token) => void | Promi
 
 import fm from 'front-matter';
 
+export type PostAttr = {
+    title: string,
+    subtitle: string,
+    description: string,
+    created_date: string,
+    tags: string[],
+}
+
+import {readingTime} from "reading-time-estimator";
+import TimeAgo from 'javascript-time-ago'
+import en from 'javascript-time-ago/locale/en'
 function custom_hooks($state: MarkedState): HooksObject {
     return {
         preprocess(markdown) {
-            let { attributes, body } = fm(markdown);
+            let { attributes, body }: { attributes: PostAttr, body: string } = fm(markdown);
 
-            let attr = { ...attributes as any, link: $state.filename };
+            let rt = readingTime(markdown, 80);
+            TimeAgo.addDefaultLocale(en);
+            const timeAgo = new TimeAgo('en-US');
+
+            let attr = {
+                ...attributes,
+                // extra attrs
+                link: $state.filename,
+                estimate: `<em>${rt.words} words</em><span class="status mx-1"></span><em>${rt.text}</em>`,
+                time_ago: timeAgo.format(new Date(attributes['created_date'])),
+            };
             $state.meta = attr;
 
-            for (const prop in attributes as any) {
+            for (const prop in attr) {
                 if (prop in this.options) {
-                    this.options[prop] = attributes[prop];
+                    // @ts-ignore
+                    this.options[prop] = attr[prop];
                 }
                 /// interpolate yaml's variables
                 const regex = new RegExp(`\\{${prop}\\}`, 'g');
-                body = body.replaceAll(regex, attributes[prop]);
+                // @ts-ignore
+                body = body.replaceAll(regex, attr[prop]);
             }
+
             return body;
         },
     }
 }
+
+// turn __{text}__ into <u>{text}</u>
+const underlineExt: TokenizerAndRendererExtension = {
+    name: 'underline',
+    level: 'inline',
+    tokenizer(src) {
+        const rule = /^__([^_\n]+?)__/;
+        const match = rule.exec(src);
+        if (match) {
+            return {
+                type: 'underline',
+                raw: match[0],
+                text: match[1],
+            };
+        }
+    },
+    renderer(token) {
+        return `<u>${token.text}</u>`;
+    },
+};

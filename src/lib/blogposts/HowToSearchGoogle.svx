@@ -2,14 +2,15 @@
 title: 'The Complete Guide to Markdown'
 subtitle: 'markdown element showcase'
 description: 'Markdown is a lightweight markup language used to format plain text. It is widely used for documentation, writing blogs, and creating formatted content easily.'
-link: 'how-to-search-google'
 created_date: '2025-03-23'
 tags:
     - 'markdown'
 ---
 
 
-# The Complete Guide to Markdown
+# {title}
+
+{estimate}
 
 ## Introduction
 
@@ -36,15 +37,6 @@ Markdown is a lightweight markup language used to format plain text. It is widel
 ## Headings
 
 Markdown supports six levels of headings:
-
-```markdown
-# Heading 1
-## Heading 2
-### Heading 3
-#### Heading 4
-##### Heading 5
-###### Heading 6
-```
 
 ## Paragraphs
 

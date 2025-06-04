@@ -1,5 +1,5 @@
 {
-    "oxc.enable": true,
+    // "oxc.enable": true,
     "files.exclude": {
         "**/.git": true,
         "**/.svn": true,
@@ -10,9 +10,10 @@
         "node_modules/": true
     },
     "files.associations": {
-        "*.svx": "svelte"
+        "*.svx": "markdown",
     },
     "[svelte]": {
         "editor.wordWrap": "on"
-    }
+    },
+    "search.useIgnoreFiles": true,
 }
