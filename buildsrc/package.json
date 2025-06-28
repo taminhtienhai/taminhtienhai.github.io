@@ -15,11 +15,11 @@
     "change-case": "^5.0.0",
     "front-matter": "^4.0.0",
     "hastscript": "^9.0.0",
-    "javascript-time-ago": "^2.5.11",
-    "marked": "^15.0.0",
-    "marked-shiki": "^1.2.0",
-    "oxc-transform": "0.72.0",
-    "reading-time-estimator": "^1.14.0"
+    "javascript-time-ago": "^2.0.0",
+    "marked": "*",
+    "marked-shiki": "*",
+    "oxc-transform": "*",
+    "reading-time-estimator": "^1.0.0"
   },
   "peerDependencies": {
     "typescript": "^5"

@@ -50,14 +50,15 @@ export function markdownSvelte(): PreprocessorGroup {
 }
 
 export function indexesGen(): PreprocessorGroup {
+    // This flag ensures that build_indexes is called only once per build process.
+    // The ATTRs array is re-initialized on each 'buildsrc' build, so no manual reset is needed.
     let is_called = false;
     const build_indexes = () => {
+        console.log('Building post indexes (all_post.json and badge_*.json)...');
         const OUT_DIR = 'static';
         writeFileSync(path.join(`${OUT_DIR}/meta`, `all_post.json`), JSON.stringify(ATTRs));
 
-        // todo: badge classify
-
-        const BadgeMapping = new Map();
+        const BadgeMapping = new Map<string, Partial<PostAttr>[]>();
 
         for (const post of ATTRs) {
             const tags = post?.tags ?? [];
@@ -65,7 +66,7 @@ export function indexesGen(): PreprocessorGroup {
             for (const tag of tags) {
                 if (BadgeMapping.has(tag)) {
                     const curposts = BadgeMapping.get(tag);
-                    BadgeMapping.set(tag, [...curposts, post]);
+                    BadgeMapping.set(tag, [...curposts!, post]);
                 } else {
                     BadgeMapping.set(tag, [post]);
                 }
@@ -78,6 +79,8 @@ export function indexesGen(): PreprocessorGroup {
         }
     };
     const call_once = () => {
+        // Trigger index building only once and after at least 4 posts have been processed
+        // (since prerender entries are generated based on these indexes).
         if (!is_called && ATTRs.length > 3) {
             build_indexes();
             is_called = true;
@@ -94,23 +97,29 @@ export function indexesGen(): PreprocessorGroup {
 import { readFileSync } from 'fs';
 
 async function parseMd(marked: ReturnType<typeof MdParser>, content: string): Promise<string> {
-    // ctx: svelte treat '{' & '}' as start of template token
-    const output = (await marked.parse(content, { async: true }))
-        .replaceAll(/{/g, "&lbrace;")
-        .replaceAll(/}/g, "&rbrace;")
-        .replaceAll(/&lbrace;@(\w+)\s(.*?)&rbrace;/g, "{@$1 $2}")
-        .replaceAll(/&lbrace;#(\w+)\s(.*?)&rbrace;/g, "{#$1 $2}")
-        .replaceAll(/&lbrace;:else&rbrace;/g, "{:else}")
-        .replaceAll(/&lbrace;\/if&rbrace;/g, "{/if}");
+    const output = (await marked.parse(content, { async: true }));
+    // WARN: the `marked.$state` being modified during the parse process, please never change this order
     const { meta } = marked.$state;
 
-    // read 'post.temp.svelte' in /template directory
-    const file = readFileSync('./buildsrc/template/post.temp.svelte');
-    const header = file.toString();
+    // Read 'post.temp.svelte' from the template directory
+    const templatePath = './buildsrc/template/post.temp.svelte';
+    const header = readFileSync(templatePath, 'utf-8');
+
+    // Replace Svelte template tokens explicitly
+    const processedOutput = output
+        .replace(/\{/g, "&lbrace;")
+        .replace(/\}/g, "&rbrace;")
+        .replace(/&lbrace;@(\w+)\s(.*?)(?:&rbrace;)/g, "{@$1 $2}")
+        .replace(/&lbrace;#(\w+)\s(.*?)(?:&rbrace;)/g, "{#$1 $2}")
+        .replace(/&lbrace;:else&rbrace;/g, "{:else}")
+        .replace(/&lbrace;\/if&rbrace;/g, "{/if}");
+
+    const tagsHtml = meta.tags?.map(tag => `<span class="badge badge-primary">${tag}</span>`).join(' ') ?? '';
+
     return `
     ${header}
     <h1>${meta.title}</h1>
     <p>${meta?.estimate ?? ''}</p>
-    ${meta.tags?.map(tag => `<span class="badge badge-primary">${tag}</span>`).join(' ')}
-    ${output}`;
+    ${tagsHtml}
+    ${processedOutput}`;
 }

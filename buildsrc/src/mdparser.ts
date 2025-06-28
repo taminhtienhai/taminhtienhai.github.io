@@ -128,42 +128,28 @@ export function compilerErrorBlock(options = {}): ShikiTransformer {
   }
 }
 
-function callout(text: string, type: 'info' | 'warn' | 'error' | 'success'){
-    const ICONs = {
-        info: 'solar:pen-line-duotone',
-        warn: 'cuida:warning-outline',
-        error: 'mdi:cross-circle-outline',
-        success: 'mdi:success',
-    };
-    const BGs = {
-        info: 'bg-info/15',
-        warn: 'bg-warning/15',
-        error: 'bg-error/15',
-        success: 'bg-success/15',
-    };
-    const TEXTs = {
-        info: 'text-info',
-        warn: 'text-warning',
-        error: 'text-error',
-        success: 'text-success',
-    };
+const CALLOUT_STYLES = {
+    info: { icon: 'solar:pen-line-duotone', bg: 'bg-info/15', text: 'text-info' },
+    warn: { icon: 'cuida:warning-outline', bg: 'bg-warning/15', text: 'text-warning' },
+    error: { icon: 'mdi:cross-circle-outline', bg: 'bg-error/15', text: 'text-error' },
+    success: { icon: 'mdi:success', bg: 'bg-success/15', text: 'text-success' },
+};
+const CALLOUTS = Object.keys(CALLOUT_STYLES);
+type Callout = keyof typeof CALLOUT_STYLES;
+
+function callout(text: string, type: keyof typeof CALLOUT_STYLES) {
+    const { icon, bg, text: textColor } = CALLOUT_STYLES[type];
     const lines = text.split('\n').map(txt => `<p class="text-base-content/70">${txt}</p>`);
-    const icon = ICONs[type];
-    const bg = BGs[type];
-    const txt = TEXTs[type];
-    const callout = `
+    return `
     <section class="not-prose card card-xs sm:card-sm md:card-sm lg:card-md xl:card-md 2xl:card-lg bg-base-100 shadow-sm mb-4">
     <div class="card-body py-2 sm:py-4 ${bg} *:leading-tight">
-        <h2 class="card-title ${txt}"><Icon class="inline" icon="${icon}"/>${capitalCase(type)}</h2>
+        <h2 class="card-title ${textColor}"><Icon class="inline" icon="${icon}"/>${capitalCase(type)}</h2>
         ${lines.slice(1).join('')}
     </div>
     </section>
     `;
-        return callout;
 }
 
-const CALLOUTS = ['info', 'warn', 'error', 'success'] as const;
-type Callout = (typeof CALLOUTS)[number];
 
 function custom_render($state: MarkedState): RendererObject {
     $state.id_gen['toc'] ??= 0;
