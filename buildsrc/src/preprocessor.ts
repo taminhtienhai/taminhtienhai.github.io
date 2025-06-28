@@ -7,13 +7,9 @@ import { kebabCase } from 'change-case';
 import { writeFileSync } from 'fs';
 
 const ATTRs: Partial<PostAttr>[] = [];
+const OUT_DIR = 'static';
 
 export function markdownSvelte(): PreprocessorGroup {
-    const OUT_DIR = 'static';
-    // const SUB_DIRS = ['posts', 'images', 'tocs', 'meta', 'attrs'];
-    // const BLOG_DIR = 'assets/posts';
-    // const META_DIR = 'assets/meta';
-
     const CUSTOM_EXT = ['.svx'];
     return {
         name: 'markdown-preprocessor',
@@ -55,7 +51,6 @@ export function indexesGen(): PreprocessorGroup {
     let is_called = false;
     const build_indexes = () => {
         console.log('Building post indexes (all_post.json and badge_*.json)...');
-        const OUT_DIR = 'static';
         writeFileSync(path.join(`${OUT_DIR}/meta`, `all_post.json`), JSON.stringify(ATTRs));
 
         const BadgeMapping = new Map<string, Partial<PostAttr>[]>();

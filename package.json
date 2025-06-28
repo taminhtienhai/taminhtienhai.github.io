@@ -6,7 +6,8 @@
 	"scripts": {
 		"favicon": "cp ./assets/favicon.png ./static/favicon.png",
 		"dev": "vite dev",
-		"build": "bun favicon && bun --filter=build-src run build && vite build",
+		"prebuild": "bun build.mjs && bun favicon && bun --filter=build-src run build ",
+		"build": "bun run prebuild && vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
