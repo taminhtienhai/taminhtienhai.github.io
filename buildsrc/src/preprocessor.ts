@@ -91,30 +91,26 @@ export function indexesGen(): PreprocessorGroup {
     }
 }
 
+import { readFileSync } from 'fs';
+
 async function parseMd(marked: ReturnType<typeof MdParser>, content: string): Promise<string> {
     // ctx: svelte treat '{' & '}' as start of template token
     const output = (await marked.parse(content, { async: true }))
         .replaceAll(/{/g, "&lbrace;")
         .replaceAll(/}/g, "&rbrace;")
-        .replaceAll(/&lbrace;@attach copyToClipboard&rbrace;/g, "{@attach copyToClipboard}");
-    return `
-<script lang="ts">
-    import Icon from "@iconify/svelte";
+        .replaceAll(/&lbrace;@(\w+)\s(.*?)&rbrace;/g, "{@$1 $2}")
+        .replaceAll(/&lbrace;#(\w+)\s(.*?)&rbrace;/g, "{#$1 $2}")
+        .replaceAll(/&lbrace;:else&rbrace;/g, "{:else}")
+        .replaceAll(/&lbrace;\/if&rbrace;/g, "{/if}");
+    const { meta } = marked.$state;
 
-    function copyToClipboard(node: HTMLElement) {
-        const parent = node.parentElement;
-        const sibling = parent?.nextElementSibling;
-        const rawCode = sibling?.getAttribute('data-code') ?? '';
-        node.addEventListener('click', (_) => {
-            navigator.clipboard.writeText(rawCode);
-            node.disabled = true;
-            setTimeout(() => {
-                node.disabled = false;
-                node.checked = false;
-            }, 1000);
-        });
-    }
-</script>
-${output}
-`;
+    // read 'post.temp.svelte' in /template directory
+    const file = readFileSync('./buildsrc/template/post.temp.svelte');
+    const header = file.toString();
+    return `
+    ${header}
+    <h1>${meta.title}</h1>
+    <p>${meta?.estimate ?? ''}</p>
+    ${meta.tags?.map(tag => `<span class="badge badge-primary">${tag}</span>`).join(' ')}
+    ${output}`;
 }

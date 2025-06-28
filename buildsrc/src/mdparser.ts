@@ -1,5 +1,5 @@
 import { Marked, type HooksObject, type MarkedOptions, type RendererObject, type Token, type TokenizerAndRendererExtension } from "marked"
-import { kebabCase } from "change-case";
+import { kebabCase, capitalCase } from "change-case";
 
 export type ToC = Array<{
     id: string,
@@ -38,6 +38,7 @@ export default function MdParser($state: MarkedState = {
     });
     marked.use(markedShikiExt());
     return {
+        $state,
         parse(content: string, options: MarkedOptions & {
             async: true;
         }) {
@@ -47,7 +48,7 @@ export default function MdParser($state: MarkedState = {
             async: true;
         }) {
             return marked.parseInline(content, options);
-        }
+        },
     }
 };
 
@@ -94,13 +95,13 @@ const markedShikiExt = () => {
                     }),
                     transformerMetaHighlight(),
                     transformerMetaWordHighlight(),
-                    addCopyButton(),
+                    compilerErrorBlock(),
                 ],
             });
         },
         container: `
 <figure class="highlighted-code relative">
-<label class="swap absolute top-2 right-2">
+<label class="swap absolute top-2 right-2" data-code="%t" data-lang="%l">
     <input type="checkbox" {@attach copyToClipboard} />
     <Icon class="swap-on inline-block" icon="openmoji:check-mark" width="24" height="24" />
     <Icon class="swap-off inline-block" icon="solar:copy-broken" width="24" height="24" />
@@ -110,50 +111,59 @@ const markedShikiExt = () => {
     });
 };
 
-export function addCopyButton(options = { toggle: 1000 }): ShikiTransformer {
-  const toggleMs = options.toggle || 3000
-
+export function compilerErrorBlock(options = {}): ShikiTransformer {
   return {
     name: 'shiki-transformer-copy-button',
     pre(node) {
         // @ts-ignore
-        node.properties['data-code'] = this.source;
-        node.properties['data-debounce'] = toggleMs;
+        // node.properties['data-code'] = this.source;
+        // node.properties['data-debounce'] = toggleMs;
         node.properties['class'] += ' line-clamp-20 overflow-auto';
+
+        const lang = node.properties['data-lang'];
+        if (lang === '') {
+            node.properties['class'] += ' compiler-error';
+        }
     },
   }
 }
 
-function callout(text: string, type: 'info' | 'warn' | 'error') {
+function callout(text: string, type: 'info' | 'warn' | 'error' | 'success'){
     const ICONs = {
         info: 'solar:pen-line-duotone',
         warn: 'cuida:warning-outline',
         error: 'mdi:cross-circle-outline',
+        success: 'mdi:success',
     };
     const BGs = {
-        info: 'bg-info/10',
-        warn: 'bg-warning/10',
-        error: 'bg-error/10',
+        info: 'bg-info/15',
+        warn: 'bg-warning/15',
+        error: 'bg-error/15',
+        success: 'bg-success/15',
     };
     const TEXTs = {
         info: 'text-info',
         warn: 'text-warning',
         error: 'text-error',
+        success: 'text-success',
     };
-    const lines = text.split('\n').map(txt => `<p class="text-base-content/60">${txt}</p>`);
+    const lines = text.split('\n').map(txt => `<p class="text-base-content/70">${txt}</p>`);
     const icon = ICONs[type];
     const bg = BGs[type];
     const txt = TEXTs[type];
     const callout = `
-<section class="not-prose card card-xs sm:card-sm md:card-sm lg:card-md xl:card-md 2xl:card-lg bg-base-100 shadow-sm mb-4">
-<div class="card-body py-2 sm:py-4 ${bg} *:leading-tight">
-    <h2 class="card-title text-lg ${txt}"><Icon class="inline" icon="${icon}"/>${type}</h2>
-    ${lines.slice(1).join('')}
-</div>
-</section>
-`;
+    <section class="not-prose card card-xs sm:card-sm md:card-sm lg:card-md xl:card-md 2xl:card-lg bg-base-100 shadow-sm mb-4">
+    <div class="card-body py-2 sm:py-4 ${bg} *:leading-tight">
+        <h2 class="card-title ${txt}"><Icon class="inline" icon="${icon}"/>${capitalCase(type)}</h2>
+        ${lines.slice(1).join('')}
+    </div>
+    </section>
+    `;
         return callout;
 }
+
+const CALLOUTS = ['info', 'warn', 'error', 'success'] as const;
+type Callout = (typeof CALLOUTS)[number];
 
 function custom_render($state: MarkedState): RendererObject {
     $state.id_gen['toc'] ??= 0;
@@ -166,14 +176,11 @@ function custom_render($state: MarkedState): RendererObject {
             </h${depth}>`
         },
         blockquote({ text }) {
-            const CALLOUTS = ['info', 'warn', 'error'];
             const calloutsRegex = /^\[!([a-zA-Z]+)\]/;
             const matches = calloutsRegex.exec(text);
-
-            const calloutTxt = matches?.[1];
+            const calloutTxt = matches?.[1] as Callout;
             if (matches && calloutTxt && CALLOUTS.includes(calloutTxt)) {
-                // @ts-ignore
-                return callout(text, matches[1]);
+                return callout(text, calloutTxt);
             }
 
             return `<blockquote>${text}</blockquote>`
@@ -205,6 +212,7 @@ export type PostAttr = {
     description: string,
     created_date: string,
     tags: string[],
+    estimate?: string,
 }
 
 import {readingTime} from "reading-time-estimator";
