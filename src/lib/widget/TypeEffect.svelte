@@ -47,4 +47,3 @@
 </script>
 
 <span bind:this={target}></span>
-

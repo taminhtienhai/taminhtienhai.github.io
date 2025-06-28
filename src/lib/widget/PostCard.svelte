@@ -10,6 +10,7 @@
         created_date?: string;
         tags?: string[];
         link?: string;
+        time_ago?: string;
     };
 
     const {
@@ -20,6 +21,7 @@
         subtitle,
         tags = [],
         link = '',
+        time_ago = '',
     }: PostCardParams = $props();
 
     const badge_colors = ['badge-primary', 'badge-secondary', 'badge-info', 'badge-warning', 'badge-success', 'basdge-neutral', 'badge-error'];
@@ -32,7 +34,10 @@ bg-base-100 shadow-sm max-w-2xl w-auto indicator">
     <div class="card-body cursor-auto py-3 sm:py-6">
         <a href="/post/{link}" class="card-title group hover:cursor-pointer *:self-start">
             <span class="group-hover:underline">{title}</span>
-            <span class="ml-auto text-xs sm:text-sm font-light font-mono min-w-fit mt-[.5em]">{created_date}</span>
+            <span class="ml-auto text-xs sm:text-sm font-light font-mono min-w-fit mt-[.5em]">
+                <span class="group-hover:hidden">{created_date}</span>
+                <span class="hidden group-hover:inline">{time_ago}</span>
+            </span>
         </a>
         <span class="sm:text-sm/tight font-light text-base-content/50">{subtitle}</span>
         <p class="overflow-ellipsis line-clamp-2">{description}</p>

@@ -3,11 +3,10 @@
     import ArticleSkeleton from '$lib/widget/ArticleSkeleton.svelte';
     import TableOfContent from '$lib/widget/TableOfContent.svelte';
     import TocSkeleton from '$lib/widget/TOCSkeleton.svelte';
-    import { onMount } from 'svelte';
+    import { onMount, type Component } from 'svelte';
     import { writable } from 'svelte/store';
 
     const { data } = $props();
-
 
     onMount(() => {
         const activeHeaderId = writable('');
@@ -41,10 +40,9 @@
             window.addEventListener('scroll', handleScroll(100, toc));
         });
         return () => {
-            window.removeEventListener('scroll', (_event) => {});
         };
     });
-    
+
 </script>
 
 <svelte:head>
@@ -56,16 +54,15 @@
 
 </svelte:head>
 
-<section class="flex pt-10">
+<section class="flex pt-[3em] pb-[10em] gap-x-4">
     <div class="flex-0 sm:flex-1 w-auto shrink"></div>
-    <article class="prose sm:prose-sm md:prose
+    <article class="prose sm:prose-sm md:prose 2xl:prose-lg prose-pre:leading-6 prose-pre:min-h-[4em]
     flex-1 sm:basis-4/5 lg:basis-5/6
     min-w-[60%] sm:min-w-[50%]
-    px-5 sm:px-0">
+    font-inter">
         {#await data.content}
             <ArticleSkeleton/>
-        {:then PostContent} 
-            <!-- {@html value} -->
+        {:then PostContent: { default: Component }}
             <PostContent.default/>
         {:catch error}
             <p class="bg-error">{error}</p>
@@ -78,7 +75,7 @@
         <TocSkeleton/>
         {:then toc}
         <div class="hidden
-        sm:sticky sm:block sm:top-20 sm:px-0">
+        sm:sticky sm:block sm:top-20">
             <TableOfContent title={data.title} headings={toc} />
         </div>
         {:catch error}

@@ -20,4 +20,4 @@ export const findPostsByTitle: (text: string) => Promise<Post[]>
 
 
 export const GET = (path: string) => fetch(path)
-.then(res => res.json());
+.then(res => res.json())

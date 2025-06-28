@@ -4,6 +4,7 @@
     import PostCard from "$lib/widget/PostCard.svelte";
     import SearchPanel from "$lib/widget/SearchFilter.svelte";
     import LoginForm from "$lib/widget/LoginForm.svelte";
+    import Callout from "$lib/widget/Callout.svelte";
 </script>
 
 <svelte:head>
@@ -62,5 +63,14 @@ Dropdown Menu
 <section class="w-full flex justify-center">
 <LoginForm/>
 </section>
+
+
+<div class="divider text-2xl font-bold my-20">
+    Callouts
+</div>
+<section class="w-full flex justify-center">
+<Callout/>
+</section>
+
 
 <div class="footer h-36"></div>

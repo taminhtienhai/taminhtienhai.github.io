@@ -7,12 +7,6 @@ tags:
     - 'markdown'
 ---
 
-# {title}
-
-{estimate}
-
-#rust #vs #java
-
 ## I. Mở đầu
 
 Chao xìn, xin chào, rất vui vì bạn đã dành thời gian để xem những chia sẻ của mình trong lĩnh vực lập trình. Và dành cho những ai đã khởi đầu con đường lập trình thông qua những video Java của mấy anh ở đất nước có dân số đứng thứ 2 thế giới, ta có thể nói rằng, OOP chính là bài học vỡ lòng mà bất kỳ ai cũng ~~phải~~ đã thuộc làu làu như 5 điều bác hồ dạy. Chính vì lý do này, khi chuyển sang 1 ngôn ngữ không tuân theo các nguyên tắc của Java, việc áp đặt mindset cũ và đặt ra những so sánh là điều khó tránh khỏi.
@@ -68,7 +62,7 @@ impl LLM for ChatGPT {}
 let llms: Vec<LLM> = Vec::from([ChatGPT::default(), Gemini::default(), Claude::default()]);
 ```
 
-```text
+```
 
 ```
 

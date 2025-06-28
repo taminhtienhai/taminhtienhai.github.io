@@ -8,10 +8,6 @@ tags:
     - '2025'
 ---
 
-# {title}
-
-{estimate}
-
 ## Introduction
 Web development is evolving rapidly, with new technologies shaping how developers build and deploy applications. In 2025, trends like AI-driven development, WebAssembly, and edge computing are redefining the landscape.
 
@@ -28,6 +24,10 @@ this is __underline text__ !!!!
 > [!error]
 > multiple line
 > callouts
+
+> [!success]
+> hurray
+
 
 ## Key Trends
 

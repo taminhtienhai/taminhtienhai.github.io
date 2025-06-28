@@ -2,6 +2,8 @@
     let { children } = $props();
 
     const timelines = ['2025','2024','2023','2022','2021'];
+    
+    let activeTl = $state(0);
 </script>
 
 <svelte:head>
@@ -11,13 +13,21 @@
 <section class="relative">
     <aside class="absolute top-10 left-1/12">
         <ul class="timeline timeline-vertical
-        *:first:opacity-100 *:first:[&_hr]:bg-secondary/90
         hidden lg:block">
-            {#each timelines as timeline}
-            <li class="h-32 opacity-50">
+            {#each timelines as timeline, index}
+            <li
+                class={[
+                    "h-32 [&_hr]:transition-all",
+                    index !== activeTl && "opacity-50",
+                    index === activeTl && "opacity-100 [&_hr]:bg-secondary",
+                ]}
+            >
                 <hr/>
-                <div class="timeline-start timeline-box">{timeline}</div>
-                <hr />
+                <div class="timeline-start timeline-box cursor-pointer btn-arrow-right bg-base-content/10"
+                    onclick={() => activeTl = index}>
+                    <span class="block -translate-x-1">{timeline}</span>
+                </div>
+                <hr/>
             </li>
             {/each}
           </ul>

@@ -8,10 +8,6 @@ tags:
     - 'programming'
 ---
 
-# {title}
-
-{estimate}
-
 ## Introduction
 Rust has been gaining popularity as one of the safest and most efficient programming languages. With its focus on memory safety, performance, and concurrency, it is rapidly becoming the go-to choice for systems programming.
 

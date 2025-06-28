@@ -14,6 +14,12 @@
         const isReachBottom = document.body.scrollHeight === scrolledTo
         return !isReachBottom;
     });
+
+    function compareDate(lhs: string, rhs: string) {
+        const date1 = new Date(lhs).getTime()
+        const date2 = new Date(rhs).getTime()
+        return date2 - date1;
+    }
 </script>
 
 <svelte:window bind:scrollY={wScrollY}/>
@@ -23,7 +29,7 @@
     <PostCardSkeleton/>
 {/each}
 {:then posts}
-{#each posts.slice(offset, limit) as post}
+{#each posts.sort((a,b) => compareDate(a.created_date, b.created_date)).slice(offset, limit) as post}
     <PostCard {...post}/>
 {/each}
 <LoadMore bind:limit={limit} total={posts.length} bind:hidden={reachBottom}/>
