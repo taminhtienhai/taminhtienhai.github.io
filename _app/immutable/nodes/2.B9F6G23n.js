@@ -1,5 +1,0 @@
-import"../chunks/CWj6FrbW.js";import{$ as g,c as t,r as e,s as n,n as _,t as b,g as y}from"../chunks/B1vULrNJ.js";import{t as p,h as $,a as m,s as T}from"../chunks/J5OxWvpZ.js";import{e as j,i as k}from"../chunks/BbbgeifC.js";import{s as w}from"../chunks/BlzO97vA.js";var B=p('<li class="h-32 opacity-50"><hr> <div class="timeline-start timeline-box"> </div> <hr></li>'),H=p(`<section class="relative"><aside class="absolute top-10 left-1/12"><ul class="timeline timeline-vertical
-        *:first:opacity-100 *:first:[&amp;_hr]:bg-secondary/90
-        hidden lg:block"></ul></aside> <section class="flex flex-col justify-center items-center w-full pt-10
-    gap-5 sm:gap-10
-    *:mx-2"><!></section></section>`);function D(d,v){const f=["2025","2024","2023","2022","2021"];var a=H();$(l=>{g.title="HaiTMT - Blog"});var s=t(a),r=t(s);j(r,21,()=>f,k,(l,u)=>{var i=B(),c=n(t(i),2),x=t(c,!0);e(c),_(2),e(i),b(()=>T(x,y(u))),m(l,i)}),e(r),e(s);var o=n(s,2),h=t(o);w(h,()=>v.children),e(o),e(a),m(d,a)}export{D as component};
