@@ -1,0 +1,160 @@
+---
+title: 'Rust vs. Zig: A Tale of Two Systems Languages'
+subtitle: 'Choosing between safety and simplicity'
+description: 'An in-depth comparison of Rust and Zig, exploring their different philosophies on memory management, error handling, and metaprogramming for systems development.'
+created_date: '2025-08-04'
+tags:
+    - 'rust'
+    - 'zig'
+    - 'programming'
+    - 'systems'
+---
+
+## Introduction
+
+In the world of systems programming, C and C++ have long been the dominant forces. However, two modern languages, Rust and Zig, are emerging as powerful alternatives, each with a unique philosophy. Rust prioritizes ultimate memory safety through its strict compiler and ownership model, while Zig champions simplicity, explicitness, and developer productivity, offering a more direct alternative to C.
+
+This post explores the core differences between Rust and Zig to help you decide which language might be the right fit for your next project.
+
+## Memory Management
+
+The most significant difference between Rust and Zig lies in their approach to memory management.
+
+### Rust: The Ownership Model
+
+Rust guarantees memory safety at compile-time without a garbage collector. It achieves this through its revolutionary ownership system, which consists of three core rules:
+1.  Each value has a single owner.
+2.  There can only be one owner at a time.
+3.  When the owner goes out of scope, the value is dropped.
+
+This system, combined with borrowing and lifetimes, prevents entire classes of bugs like null pointer dereferences, buffer overflows, and data races.
+
+```rust
+fn main() {
+    let s1 = String::from("hello");
+    let s2 = s1; // s1 is moved to s2
+    // println!("{}", s1); // Error: s1 has been moved and is no longer valid
+}
+```
+
+### Zig: Manual Memory Management
+
+Zig takes a more traditional C-like approach, giving the developer full control over memory. There is no hidden memory allocation. If you want to put something on the heap, you must explicitly ask an allocator for memory and are responsible for freeing it.
+
+This philosophy is "What you see is what you get." While it offers great power and clarity, it also places the responsibility of preventing memory leaks and use-after-free bugs squarely on the developer.
+
+```zig
+const std = @import("std");
+
+pub fn main() !void {
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    const allocator = gpa.allocator();
+
+    const message = try allocator.alloc(u8, 13);
+    defer allocator.free(message); // Memory is freed at the end of the scope
+
+    @memcpy(message, "Hello, Zig!");
+}
+```
+
+## Error Handling
+
+Both languages eschew traditional exceptions but handle errors in distinct ways.
+
+### Rust: `Result` and `Option` Enums
+
+Rust uses the `Result<T, E>` enum for recoverable errors and the `Option<T>` enum for values that can be absent. This forces the developer to handle potential failures at compile time, making the code robust and explicit about its error paths. The `?` operator provides a convenient way to propagate errors.
+
+```rust
+fn read_file() -> Result<String, std::io::Error> {
+    let content = std::fs::read_to_string("my_file.txt")?;
+    Ok(content)
+}
+```
+
+### Zig: Error Sets and `try`
+
+Zig uses error sets, which are a distinct type. A function can return a value or an error from a specific set. The `try` keyword is used to propagate errors, similar to Rust's `?`. This approach avoids the overhead of wrapping values in a `Result` type and is often considered more lightweight.
+
+```zig
+const FileError = error{
+    AccessDenied,
+    OutOfMemory,
+};
+
+fn read_file() FileError![]const u8 {
+    // ... logic that can return an error
+    return "file content";
+}
+
+pub fn main() !void {
+    const content = try read_file();
+}
+```
+
+## Metaprogramming
+
+Both languages offer powerful metaprogramming capabilities, but their implementations are fundamentally different.
+
+### Rust: Macros
+
+Rust's metaprogramming is primarily achieved through a powerful macro system (`macro_rules!` and procedural macros). Macros allow you to write code that writes other code at compile time, enabling you to create powerful abstractions and DSLs (Domain-Specific Languages). However, they can be complex to write and debug.
+
+```rust
+macro_rules! say_hello {
+    () => {
+        println!("Hello, World!");
+    };
+}
+
+fn main() {
+    say_hello!();
+}
+```
+
+### Zig: `comptime`
+
+Zig's approach is arguably simpler and more integrated into the language. The `comptime` keyword allows you to execute any Zig code at compile time. This can be used for generic data structures, type generation, and conditional compilation in a way that feels like normal programming, without a separate macro language.
+
+```zig
+fn add<T: type>(a: T, b: T) T {
+    return a + b;
+}
+
+pub fn main() void {
+    const result = add(5, 10); // T is inferred at compile time
+    const float_result = add(3.14, 2.71);
+}
+```
+
+## Build System & Tooling
+
+### Rust: Cargo
+
+Rust comes with **Cargo**, an exceptional build tool and package manager. Cargo handles dependencies, builds, tests, and documentation seamlessly. It is one of Rust's most beloved features and a huge contributor to its productivity.
+
+### Zig: Integrated Build System
+
+Zig has a built-in build system that uses Zig code itself for build scripts. It's designed to be a simple, dependency-free replacement for tools like `make` or `cmake`. A standout feature is its first-class support for cross-compilation, making it incredibly easy to build for different architectures and operating systems.
+
+## Conclusion
+
+| Feature | Rust | Zig |
+| :--- | :--- | :--- |
+| **Philosophy** | Safety and correctness | Simplicity and explicitness |
+| **Memory** | Ownership, borrow checker | Manual allocation |
+| **Error Handling** | `Result<T, E>` enum | Error sets |
+| **Metaprogramming** | Macros | `comptime` |
+| **Tooling** | Cargo | Integrated build system |
+
+**Choose Rust if:**
+*   Your highest priority is memory safety and preventing concurrent data races.
+*   You are building large, complex systems where the compiler's guarantees are invaluable.
+*   You appreciate a rich ecosystem and powerful tooling like Cargo.
+
+**Choose Zig if:**
+*   You want a simpler language that is a direct evolution of C.
+*   You need fine-grained control over memory and performance.
+*   You value easy cross-compilation and a straightforward build process.
+
+Both Rust and Zig are fantastic languages pushing the boundaries of systems programming. The best choice depends entirely on your project's goals and your personal programming philosophy.

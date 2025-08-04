@@ -1,0 +1,108 @@
+---
+title: 'How to Set Up a Dark/Light Mode Toggle with TailwindCSS V4'
+subtitle: 'A simple guide to implementing theme switching'
+description: 'Learn how to easily add a dark and light mode toggle to your website using the new features in TailwindCSS v4, without any plugins.'
+created_date: '2025-08-05'
+tags:
+    - 'tailwindcss'
+    - 'css'
+    - 'dark-mode'
+    - 'webdev'
+---
+
+## Introduction
+
+With the release of TailwindCSS v4, setting up a dark and light mode toggle has never been easier. The framework now includes first-class support for theme variants, removing the need for the `dark:` variant prefix and simplifying the configuration. This guide will walk you through the process of creating a theme-aware toggle using just TailwindCSS and a few lines of JavaScript.
+
+## 1. Configuring TailwindCSS
+
+First, you need to configure your `tailwind.config.ts` file to support theme switching. Tailwind v4 introduces a new `theme` property where you can define light and dark mode styles.
+
+Here’s how to set it up:
+
+```ts
+import { defineConfig } from 'tailwindcss'
+
+export default defineConfig({
+  content: [
+    './src/**/*.{html,js,svelte,ts}',
+  ],
+  theme: {
+    // For light mode (default)
+    light: {
+      colors: {
+        primary: '#1a202c',
+        background: '#ffffff',
+        text: '#4a5568',
+      },
+    },
+    // For dark mode
+    dark: {
+      colors: {
+        primary: '#ffffff',
+        background: '#1a202c',
+        text: '#a0aec0',
+      },
+    },
+    extend: {},
+  },
+  plugins: [],
+})
+```
+
+In this configuration, we define two themes: `light` and `dark`. Each theme has its own set of colors for `primary`, `background`, and `text`. When a theme is active, these colors will be applied automatically.
+
+## 2. Creating the HTML
+
+Next, create the HTML structure for your theme toggle. We'll use a simple button that, when clicked, will switch between the two themes.
+
+```html
+<button id="theme-toggle" class="px-4 py-2 rounded-md bg-primary text-background">
+  Toggle Theme
+</button>
+
+<div class="p-8 bg-background text-text">
+  <h1 class="text-2xl font-bold text-primary">Hello, TailwindCSS v4!</h1>
+  <p>This is an example of a dark and light mode setup.</p>
+</div>
+```
+
+Notice that we are using the semantic color names we defined in our config (`bg-background`, `text-text`, `text-primary`). Tailwind will automatically resolve these to the correct color values based on the active theme.
+
+## 3. Adding the JavaScript
+
+Finally, we need a bit of JavaScript to handle the theme switching logic. This script will listen for clicks on our toggle button and add or remove a `dark` class from the `<html>` element.
+
+```javascript
+document.addEventListener('DOMContentLoaded', () => {
+  const themeToggle = document.getElementById('theme-toggle');
+  const htmlElement = document.documentElement;
+
+  // Check for saved theme preference or use system preference
+  if (localStorage.getItem('theme') === 'dark' || 
+     (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    htmlElement.classList.add('dark');
+  }
+
+  themeToggle.addEventListener('click', () => {
+    htmlElement.classList.toggle('dark');
+    
+    // Save the user's preference
+    if (htmlElement.classList.contains('dark')) {
+      localStorage.setItem('theme', 'dark');
+    } else {
+      localStorage.setItem('theme', 'light');
+    }
+  });
+});
+```
+
+This script does the following:
+1.  It checks for a theme preference saved in `localStorage`.
+2.  If no preference is found, it respects the user's operating system setting (`prefers-color-scheme`).
+3.  When the button is clicked, it toggles the `dark` class on the `<html>` element.
+4.  It saves the user's choice to `localStorage` for future visits.
+
+## Conclusion
+
+And that's it! You now have a fully functional dark and light mode toggle powered by TailwindCSS v4. By leveraging the new theme capabilities, you can create clean, maintainable, and user-friendly theme experiences with minimal effort. This plugin-free approach simplifies your setup and keeps your project lean.

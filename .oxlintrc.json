@@ -14,11 +14,17 @@
         "docs/**"
     ],
     "rules": {
-        "sort-keys": "off",
-        "sort-imports": "off",
-        "no-unused-vars": "warn",
-        "func-style": "off",
-        "consistent-type-definitions": "off",
-        "filename-case": "off"
+        "eslint/sort-keys": "off",
+        "eslint/sort-imports": "off",
+        "eslint/no-unused-vars": "warn",
+        "eslint/func-style": "off",
+        "eslint/consistent-type-definitions": "off",
+        "eslint/filename-case": "off",
+        "eslint/no-var": "error",
+        "eslint/no-else-return": "error",
+        "eslint/no-negated-condition": "warn",
+        "eslint/no-unneeded-ternary": "error",
+        "eslint/no-console": "warn",
+        "eslint/no-debugger": "error"
     }
 }
