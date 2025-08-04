@@ -1,9 +1,13 @@
 <script lang="ts">
+    import { setContext } from 'svelte';
+
     let { children } = $props();
 
     const timelines = ['2025','2024','2023','2022','2021'];
     
     let activeTl = $state(0);
+
+    setContext('activeTimeline', () => timelines[activeTl]);
 </script>
 
 <svelte:head>

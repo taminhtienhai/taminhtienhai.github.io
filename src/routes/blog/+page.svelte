@@ -4,10 +4,12 @@
     import PostCardSkeleton from "$lib/widget/PostCardSkeleton.svelte";
     import { delay } from "$lib/common/utils";
     import LoadMore from "$lib/widget/LoadMore.svelte";
+    import { getContext } from "svelte";
 
     let wScrollY = $state(0);
     let offset = $state(0);
     let limit = $state(3);
+    let activeTl: () => string = getContext('activeTimeline'); // parent
 
     let reachBottom = $derived.by(() => {
         const scrolledTo = wScrollY + window.innerHeight;
@@ -20,6 +22,10 @@
         const date2 = new Date(rhs).getTime()
         return date2 - date1;
     }
+
+    function yearOf(time: string) {
+        return new Date(time).getFullYear();
+    }
 </script>
 
 <svelte:window bind:scrollY={wScrollY}/>
@@ -29,7 +35,10 @@
     <PostCardSkeleton/>
 {/each}
 {:then posts}
-{#each posts.sort((a,b) => compareDate(a.created_date, b.created_date)).slice(offset, limit) as post}
+{#each posts.filter(it => yearOf(it.created_date) === parseInt(activeTl()))
+    .sort((a,b) => compareDate(a.created_date, b.created_date))
+    .slice(offset, limit) as post
+}
     <PostCard {...post}/>
 {/each}
 <LoadMore bind:limit={limit} total={posts.length} bind:hidden={reachBottom}/>
