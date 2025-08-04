@@ -1,4 +1,4 @@
-import { Marked, type HooksObject, type MarkedOptions, type RendererObject, type Token, type TokenizerAndRendererExtension } from "marked"
+import { Marked, type HooksObject, type MarkedOptions, type RendererObject, type Token, type TokenizerAndRendererExtension } from "marked";
 import { kebabCase, capitalCase } from "change-case";
 
 export type ToC = Array<{
@@ -65,17 +65,20 @@ import {
 } from '@shikijs/transformers'
 
 const highlighter = await createHighlighter({
-    langs: ['md', 'js', 'rust', 'java'],
-    themes: ['github-dark-dimmed']
+    langs: ['md', 'js', 'rust', 'java', 'zig', 'ts', 'html'],
+    themes: ['github-light', 'github-dark-dimmed']
 });
 
 const markedShikiExt = () => {
     return markedShiki({
         highlight(code, lang, props) {
             const h = highlighter;
-            return h.codeToHtml(code, {
+            const codeHtml = h.codeToHtml(code, {
                 lang,
-                theme: 'github-dark-dimmed',
+                themes: {
+                    light: 'github-light',
+                    dark: 'github-dark-dimmed',
+                },
                 meta: { __raw: props.join(' ') }, // required by `transformerMeta*`
                 transformers: [
                     transformerNotationDiff({
@@ -98,14 +101,28 @@ const markedShikiExt = () => {
                     compilerErrorBlock(),
                 ],
             });
-        },
-        container: `
-<figure class="highlighted-code relative">
-<label class="swap absolute top-2 right-2" data-code="%t" data-lang="%l">
+
+            // HTML-escape the code for the data-code attribute to prevent invalid HTML.
+            // Newlines are replaced with &#10; to be preserved within the attribute.
+            const encodedCode = code
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;')
+                .replace(/\n/g, '&#10;');
+
+            const labelHtml = `
+<label class="swap absolute top-2 right-2" data-code="${encodedCode}" data-lang="${lang}">
     <input type="checkbox" {@attach copyToClipboard} />
     <Icon class="swap-on inline-block" icon="openmoji:check-mark" width="24" height="24" />
     <Icon class="swap-off inline-block" icon="solar:copy-broken" width="24" height="24" />
 </label>
+`;
+            return labelHtml + codeHtml;
+        },
+        container: `
+<figure class="highlighted-code relative">
 %s
 </figure>`
     });

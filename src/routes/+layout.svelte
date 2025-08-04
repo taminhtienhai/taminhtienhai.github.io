@@ -26,6 +26,10 @@
             search_input?.focus();
         }
     };
+
+    const toggleDark = () => {
+        document.documentElement.classList.toggle('dark');
+    };
 </script>
 
 <svelte:head>
@@ -75,7 +79,7 @@ shadow-sm pr-5 sticky top-0 z-50 transition-all">
             <li><a href="/showcase">Showcase</a></li>
         </ul>
         <label class="swap swap-rotate self-center h-full text-scale-lg">
-            <input type="checkbox" value="light" class="theme-controller" />
+            <input type="checkbox" value="light" class="theme-controller" onclick={toggleDark} />
             <div class="swap-on"><Icon icon="noto:sun" /></div>
             <div class="swap-off"><Icon icon="noto-v1:crescent-moon" /></div>
         </label>
