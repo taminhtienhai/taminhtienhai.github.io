@@ -6,7 +6,7 @@
 	"scripts": {
 		"favicon": "cp ./assets/favicon.png ./static/favicon.png",
 		"dev": "vite dev",
-		"prebuild": "bun build.mjs && bun favicon && bun --filter=build-src run build ",
+		"prebuild": "bun scripts/build.mjs && bun favicon",
 		"build": "bun run prebuild && vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
@@ -17,7 +17,6 @@
 	},
 	"devDependencies": {
 		"@iconify/svelte": "^5.0.1",
-		"@sveltejs/adapter-auto": "^6.0.1",
 		"@sveltejs/adapter-static": "^3.0.8",
 		"@sveltejs/kit": "^2.27.0",
 		"@sveltejs/vite-plugin-svelte": "^6.1.0",
