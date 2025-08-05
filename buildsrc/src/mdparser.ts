@@ -19,7 +19,7 @@ export type IdGen = Record<string, number>;
 export type MarkedState = {
     filename: string,
     toc: ToC,
-    meta: Partial<PostAttr>,
+    meta: Partial<PostMeta>,
     id_gen: IdGen,
 };
 
@@ -215,8 +215,14 @@ export type PostAttr = {
     description: string,
     created_date: string,
     tags: string[],
-    estimate?: string,
 }
+
+export type PostMeta = PostAttr & {
+    link: string,
+    estimate: string,
+    time_ago: string,
+}
+
 
 import {readingTime} from "reading-time-estimator";
 import TimeAgo from 'javascript-time-ago'
@@ -230,7 +236,7 @@ function custom_hooks($state: MarkedState): HooksObject {
             TimeAgo.addDefaultLocale(en);
             const timeAgo = new TimeAgo('en-US');
 
-            let attr = {
+            let attr: PostMeta = {
                 ...attributes,
                 // extra attrs
                 link: $state.filename,
@@ -245,7 +251,7 @@ function custom_hooks($state: MarkedState): HooksObject {
                     this.options[prop] = attr[prop];
                 }
                 /// interpolate yaml's variables
-                const regex = new RegExp(`\\{${prop}\\}`, 'g');
+                const regex = new RegExp(`{${prop}}`, 'g');
                 // @ts-ignore
                 body = body.replaceAll(regex, attr[prop]);
             }

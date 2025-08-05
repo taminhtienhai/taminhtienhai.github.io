@@ -1,12 +1,12 @@
 import { type PreprocessorGroup } from 'svelte/compiler';
-import MdParser, { type MarkedState, type PostAttr } from "./mdparser.ts";
+import MdParser, { type MarkedState, type PostMeta } from "./mdparser.ts";
 import * as path from "path";
 import { writeFile } from 'fs/promises';
 import { filenameOf, pathOf } from './utils.ts';
 import { kebabCase } from 'change-case';
 import { writeFileSync } from 'fs';
 
-const ATTRs: Partial<PostAttr>[] = [];
+const ATTRs: PostMeta[] = [];
 const OUT_DIR = 'static';
 
 export function markdownSvelte(): PreprocessorGroup {
@@ -31,7 +31,7 @@ export function markdownSvelte(): PreprocessorGroup {
 
             if (filename.endsWith('.svx') && dir === 'blogposts') {
                 transformed = await parseMd(marked, content);
-                ATTRs.push($state.meta);
+                ATTRs.push($state.meta as PostMeta);
             }
 
             const toc_des = path.join(`${OUT_DIR}/tocs`, `${fname}.json`);
@@ -53,7 +53,7 @@ export function indexesGen(): PreprocessorGroup {
         console.log('Building post indexes (all_post.json and badge_*.json)...');
         writeFileSync(path.join(`${OUT_DIR}/meta`, `all_post.json`), JSON.stringify(ATTRs));
 
-        const BadgeMapping = new Map<string, Partial<PostAttr>[]>();
+        const BadgeMapping = new Map<string, PostMeta[]>();
 
         for (const post of ATTRs) {
             const tags = post?.tags ?? [];
