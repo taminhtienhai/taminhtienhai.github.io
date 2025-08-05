@@ -2,17 +2,6 @@
     import { getBadgeColor } from "../common/constant";
     import Tag from "./Tag.svelte";
 
-    type PostCardParams = {
-        title: string;
-        subtitle?: string;
-        description?: string;
-        is_new?: boolean;
-        created_date?: string;
-        tags?: string[];
-        link?: string;
-        time_ago?: string;
-    };
-
     const {
         title,
         is_new = true,
@@ -22,9 +11,9 @@
         tags = [],
         link = '',
         time_ago = '',
-    }: PostCardParams = $props();
+    } = $props();
 
-    const badge_colors = ['badge-primary', 'badge-secondary', 'badge-info', 'badge-warning', 'badge-success', 'basdge-neutral', 'badge-error'];
+    const _badge_colors = ['badge-primary', 'badge-secondary', 'badge-info', 'badge-warning', 'badge-success', 'basdge-neutral', 'badge-error'];
 </script>
 
 <section class="card card-xs sm:card-sm md:card-sm lg:card-md xl:card-md 2xl:card-lg

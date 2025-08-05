@@ -1,4 +1,3 @@
-import { error } from "@sveltejs/kit";
 import type { PageLoad } from './$types';
 import { delay, delay_val } from "$lib/common/utils";
 import { pascalCase } from 'change-case';

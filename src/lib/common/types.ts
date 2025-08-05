@@ -6,11 +6,26 @@ export type TOC = {
     headings: Heading[];
 };
 
+export type PostAttr = {
+    title: string,
+    subtitle: string,
+    description: string,
+    created_date: string,
+    tags: string[],
+}
+
+export type PostMeta = PostAttr & {
+    link: string,
+    estimate: string,
+    time_ago: string,
+    is_new?: boolean,
+}
+
 export type Post = {
     title: string;
     subtitle: string;
     description: string;
-    link: string;
+    link:string;
     created_date: string;
     tags: string[];
 };
