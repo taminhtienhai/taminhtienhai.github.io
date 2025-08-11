@@ -17,21 +17,21 @@
 	},
 	"devDependencies": {
 		"@iconify/svelte": "^5.0.1",
-		"@sveltejs/adapter-static": "^3.0.8",
-		"@sveltejs/kit": "^2.27.0",
-		"@sveltejs/vite-plugin-svelte": "^6.1.0",
+		"@sveltejs/adapter-static": "^3.0.9",
+		"@sveltejs/kit": "^2.27.3",
+		"@sveltejs/vite-plugin-svelte": "^6.1.1",
 		"@tailwindcss/typography": "^0.5.16",
 		"@tailwindcss/vite": "^4.1.11",
 		"build-src": "workspace:*",
 		"daisyui": "^5.0.50",
 		"lit-html": "^3.3.1",
-		"oxlint": "^1.9.0",
-		"svelte": "^5.37.3",
+		"oxlint": "^1.11.1",
+		"svelte": "^5.38.0",
 		"svelte-check": "^4.3.1",
 		"tailwind-scrollbar": "^4.0.2",
 		"tailwindcss-motion": "^1.1.1",
 		"typescript": "5.8.3",
-		"vite": "^7.0.6"
+		"vite": "^7.1.1"
 	},
 	"workspaces": ["buildsrc"]
 }
