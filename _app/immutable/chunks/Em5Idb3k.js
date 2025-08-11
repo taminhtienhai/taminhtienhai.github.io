@@ -1,0 +1,1 @@
+const r=()=>fetch("/meta/all_post.json?v=1.1.0").then(async t=>({data:await t.json()})).catch(t=>({data:[],error:t})),n=t=>t?fetch(`/meta/badge_${t}.json?v=1.1.0`).then(async a=>({data:await a.json()})).catch(a=>({data:[],error:a})):r(),s=t=>r().then(a=>a.error?{error:a.error,data:[]}:{data:a.data.filter(e=>e.title.includes(t))});export{s as a,n as b,r as f};
