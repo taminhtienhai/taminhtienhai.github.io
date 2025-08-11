@@ -3,7 +3,7 @@
     import ArticleSkeleton from '$lib/widget/ArticleSkeleton.svelte';
     import TableOfContent from '$lib/widget/TableOfContent.svelte';
     import TocSkeleton from '$lib/widget/TOCSkeleton.svelte';
-    import { onMount, type Component } from 'svelte';
+    import { onMount } from 'svelte';
     import { writable } from 'svelte/store';
 
     const { data } = $props();
@@ -62,8 +62,8 @@
     font-inter">
         {#await data.content}
             <ArticleSkeleton/>
-        {:then PostContent: { default: Component }}
-            <PostContent.default/>
+        {:then { default: PostContent }}
+            <PostContent/>
         {:catch error}
             <p class="bg-error">{error}</p>
         {/await}

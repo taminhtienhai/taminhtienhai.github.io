@@ -26,13 +26,13 @@
         {#await posts}
             <li>Loading...</li>
         {:then values}
-        {#if values.length > 0}
+        {#if values.data.length > 0}
         <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">
             Most popular posts this week
         </li>
         {/if}
 
-        {#each values as item}
+        {#each values.data as item}
         <li class="list-row">
             <div class="list-col-grow">
                 <a href="/post/{item.link}" class="font-semibold">{item.title}</a>

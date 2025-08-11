@@ -1,0 +1,9 @@
+/* Tailwind Typography custom style */
+
+html.dark .prose code {
+    @apply text-amber-500 border-amber-900 rounded-sm px-[0.4em] py-[0.1em]
+}
+
+.prose code {
+    @apply text-rose-500 border-rose-900 rounded-sm px-[0.4em] py-[0.1em]
+}

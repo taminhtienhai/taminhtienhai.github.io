@@ -21,6 +21,11 @@
 		return !isReachBottom;
 	});
 
+	let displayPosts = $derived(() => posts
+		.filter((it) => yearOf(it.created_date) === parseInt(activeTl()))
+		.sort((a, b) => compareDate(a.created_date, b.created_date))
+		.slice(offset, limit));
+
 	function compareDate(lhs: string, rhs: string) {
 		const date1 = new Date(lhs).getTime();
 		const date2 = new Date(rhs).getTime();
@@ -39,13 +44,17 @@
         <PostCardSkeleton />
     {/each}
 {:else if posts}
-    {#each posts
-            .filter((it) => yearOf(it.created_date) === parseInt(activeTl()))
-            .sort((a, b) => compareDate(a.created_date, b.created_date))
-            .slice(offset, limit) as post}
-        <PostCard {...post} />
-    {/each}
-    <LoadMore bind:limit={limit} total={posts.length} bind:hidden={reachBottom} />
+	{@const psts = displayPosts()}
+	{#if psts.length > 0}
+		{#each psts as post}
+			<PostCard {...post} />
+		{/each}
+		<LoadMore bind:limit={limit} total={posts.length} bind:hidden={reachBottom} />
+	{:else}
+    <p class="text-4xl text-primary-content/30 mt-5 *:block">
+		<span>No posts found in {activeTl()} </span>
+	</p>
+	{/if}
 {:else}
-    <p class="text-error">No posts found.</p>
+    <p class="text-error">No posts found</p>
 {/if}
