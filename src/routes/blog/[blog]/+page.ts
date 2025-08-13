@@ -1,12 +1,3 @@
-// import type { PageLoad } from "./$types";
-
-
-// export const load: PageLoad = ({ params }) => {
-//     return {
-//         ...params
-//     }
-// }
-
 import { findPostsByBadge } from '$lib/service';
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
