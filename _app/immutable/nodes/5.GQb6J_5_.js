@@ -1,1 +1,0 @@
-import{f as r}from"../chunks/Em5Idb3k.js";import{_ as l}from"../chunks/VS_AzaC4.js";const t=async()=>{const o=await r();return{posts:o.data,error:o.error}},s=Object.freeze(Object.defineProperty({__proto__:null,load:t},Symbol.toStringTag,{value:"Module"}));export{l as component,s as universal};
