@@ -2,12 +2,12 @@ root = true
 
 [*]
 end_of_line = lf
-insert_final_newline = true
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = false
 
-[*.config.js]
-indent_style = space
+[{*.json,*.yml,*.yaml,*.config.json}]
 indent_size = 2
 
 [**/*.ts]
-indent_style = space
 indent_size = 4

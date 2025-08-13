@@ -16,9 +16,12 @@ const config = {
         }),
         prerender: {
             crawl: true,
-            entries: readdirSync('static/tocs/')
+            entries: [
+              '/blog',
+              ...readdirSync('static/tocs/')
                 .map(f => f.split('.')[0])
-                .map(fname => `/post/${fname}`),
+                .map(fname => `/post/${fname}`)
+            ],
         }
 	},
     compilerOptions: {

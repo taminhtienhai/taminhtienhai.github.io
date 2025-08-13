@@ -28,7 +28,7 @@
     <div class="basis-1/3 items-center mx-auto sm:mx-0">
         <h1 class="text-2xl italic text-secondary">Popular articles:</h1>
         <ul class="underline text-lg italic *:my-2 list-['=>'] text-base-content">
-            {#await findAllPosts() then posts}
+            {#await findAllPosts() then { data: posts }}
             {#each posts.slice(0, 3) as post}
             <li><a href="/post/{post.link}" class="overflow-ellipsis">{post.title}</a></li>
             {/each}
