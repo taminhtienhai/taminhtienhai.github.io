@@ -64,9 +64,14 @@ import {
     transformerMetaWordHighlight,
 } from '@shikijs/transformers'
 
+const THEMES = {
+    light: 'everforest-dark',
+    dark: 'github-dark-dimmed',
+};
+
 const highlighter = await createHighlighter({
     langs: ['md', 'js', 'rust', 'java', 'zig', 'ts', 'html'],
-    themes: ['github-light', 'github-dark-dimmed']
+    themes: Object.values(THEMES),
 });
 
 const markedShikiExt = () => {
@@ -75,10 +80,7 @@ const markedShikiExt = () => {
             const h = highlighter;
             const codeHtml = h.codeToHtml(code, {
                 lang,
-                themes: {
-                    light: 'github-light',
-                    dark: 'github-dark-dimmed',
-                },
+                themes: THEMES,
                 meta: { __raw: props.join(' ') }, // required by `transformerMeta*`
                 transformers: [
                     transformerNotationDiff({
@@ -241,7 +243,7 @@ function custom_hooks($state: MarkedState): HooksObject {
                 // extra attrs
                 link: $state.filename,
                 estimate: `<em>${rt.words} words</em><span class="status mx-1"></span><em>${rt.text}</em>`,
-                time_ago: timeAgo.format(new Date(attributes['created_date'])),
+                time_ago: timeAgo.format(new Date(attributes['created_date'] ?? Date.now())),
             };
             $state.meta = attr;
 

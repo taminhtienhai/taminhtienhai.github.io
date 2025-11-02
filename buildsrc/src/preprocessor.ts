@@ -37,8 +37,10 @@ export function markdownSvelte(): PreprocessorGroup {
             const toc_des = path.join(`${OUT_DIR}/tocs`, `${fname}.json`);
             const attr_des = path.join(`${OUT_DIR}/attrs`, `${fname}.json`);
 
-            await writeFile(toc_des, JSON.stringify($state.toc));
-            await writeFile(attr_des, JSON.stringify($state.meta));
+            await Promise.all([
+                writeFile(toc_des, JSON.stringify($state.toc)),
+                writeFile(attr_des, JSON.stringify($state.meta)),
+            ]);
 
             return { code: transformed };
         },
