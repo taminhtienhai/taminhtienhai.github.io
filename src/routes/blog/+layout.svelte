@@ -7,6 +7,7 @@
 </script>
 
 <script lang="ts">
+    import Background from '$lib/widget/Background.svelte';
     import { setContext } from 'svelte';
 
     let { children } = $props();
@@ -18,6 +19,10 @@
     <title>HaiTMT - Blog</title>
 </svelte:head>
 
+<Background
+shared="bg-base-300"
+dark="top-0 z-[-2] bg-zinc-900 bg-[radial-gradient(ellipse_80%_80%_at_50%_-25%,#3e3e3e,transparent)]"/>
+
 <section class="relative">
     <aside class="absolute top-10 left-1/12">
         <ul class="timeline timeline-vertical
@@ -27,11 +32,11 @@
                 class={[
                     "h-32 [&_hr]:transition-all",
                     timeline !== activeTl.value && "opacity-50",
-                    timeline === activeTl.value && "opacity-100 [&_hr]:bg-secondary",
+                    timeline === activeTl.value && "opacity-100 [&_hr]:bg-error",
                 ]}
             >
                 <hr/>
-                <div class="timeline-start timeline-box cursor-pointer btn-arrow-right bg-base-content/10"
+                <div class="timeline-start timeline-box cursor-pointer btn-arrow-right bg-base-content/20"
                     onclick={() => activeTl.value = timeline}>
                     <span class="block -translate-x-1">{timeline}</span>
                 </div>

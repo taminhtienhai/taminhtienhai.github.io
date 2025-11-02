@@ -9,11 +9,11 @@
 </script>
 
 <nav
-	class="sm:py-2 sm:px-1 md:py-3 md:px-1 lg:py-4 lg:px-2 border border-base-content/30 rounded-xl bg-transparent
+	class="sm:pl-1 md:pl-1 lg:pl-2 border-l-2 border-l-warning
 	max-w-xs max-h-[calc(100vh - var(--spacing-20))] mx-auto overflow-y-scroll
 	scrollbar scrollbar-thumb-base-content/10 scrollbar-thumb-rounded-lg"
 >
-	<ul class="menu menu-sm md:menu-md sm:bg-base-200 rounded-box">
+	<ul class="menu menu-sm md:menu-md bg-base-300/50 text-base-content rounded-box w-full font-light">
 		{#each tocTree as node}
 			<TOCNode {node} />
 		{/each}

@@ -17,7 +17,7 @@
 </script>
 
 <section class="card card-xs sm:card-sm md:card-sm lg:card-md xl:card-md 2xl:card-lg
-bg-base-100 shadow-sm max-w-2xl w-auto indicator">
+dark:bg-base-100 bg-primary-content/10 shadow-lg max-w-2xl w-auto indicator">
     <div class="indicator-item badge badge-secondary right-0"
     class:hidden={is_new}>new</div>
     <div class="card-body cursor-auto py-3 sm:py-6">

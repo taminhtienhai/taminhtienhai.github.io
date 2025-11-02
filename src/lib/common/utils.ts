@@ -6,7 +6,7 @@ export const debounce_async = (timeout: number) => {
             try {
                 resolve(action())
             } catch (error) {
-                reject(error);                
+                reject(error);
             }
         }, timeout);
     })
@@ -18,7 +18,7 @@ export const delay = <Out>(action: () => Out, timeout: number = 1000) => {
             try {
                 resolve(action())
             } catch (error) {
-                reject(error);                
+                reject(error);
             }
         }, timeout);
     });
@@ -31,7 +31,7 @@ export const delay_val = <Out>(val: Out, timeout: number = 1000) => {
             try {
                 resolve(val);
             } catch (error) {
-                reject(error);                
+                reject(error);
             }
         }, timeout);
     });

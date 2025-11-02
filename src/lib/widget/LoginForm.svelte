@@ -3,7 +3,7 @@
 
     const id = $props.id()
 
-    const pwd_pattern = "(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()]).{8,}";
+    const pwd_pattern = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()]).{8,}";
 </script>
 
 <section class="flex flex-col gap-5

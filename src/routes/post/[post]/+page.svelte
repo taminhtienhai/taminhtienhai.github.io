@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { Heading } from '$lib/common/types.js';
     import ArticleSkeleton from '$lib/widget/ArticleSkeleton.svelte';
+    import Background from '$lib/widget/Background.svelte';
     import TableOfContent from '$lib/widget/TableOfContent.svelte';
     import TocSkeleton from '$lib/widget/TOCSkeleton.svelte';
     import { onMount } from 'svelte';
@@ -13,11 +14,12 @@
         activeHeaderId.subscribe((() => {
             let oldValue = '';
             return (newValue) => {
-                let oldElem = window.document.getElementById(oldValue);
-                let newElem = window.document.getElementById(newValue);
+                let oldElem = window.document.querySelector(`a[href='#${oldValue}']`);
+                let newElem = window.document.querySelector(`a[href='#${newValue}']`);
 
-                oldElem?.classList.remove('active');
-                newElem?.classList.add('active');
+                const styles = ['bg-primary-content/30', 'font-bold'];
+                oldElem?.classList.remove(...styles);
+                newElem?.classList.add(...styles);
 
                 oldValue = newValue;
             }
@@ -30,7 +32,7 @@
             for (const item of headings) {
                 const element = window.document.getElementById(item?.id ?? '');
                 if (element && element.offsetTop >= scrollTop && element.offsetTop <= scrollBot) {
-                    activeHeaderId.set(`a_${item?.id ?? '0'}`);
+                    activeHeaderId.set(item?.id?.toString() ?? '0');
                     break;
                 }
             }
@@ -54,9 +56,16 @@
 
 </svelte:head>
 
+<Background
+shared="bg-base-300"
+dark="[&>div]:absolute [&>div]:inset-0 [&>div]:bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] [&>div]:bg-size-[14px_24px]"
+light="bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-size-[14px_24px]"/>
+
 <section class="flex pt-[3em] pb-[10em] gap-x-4">
     <div class="flex-0 sm:flex-1 w-auto shrink"></div>
-    <article class="prose sm:prose-sm md:prose 2xl:prose-lg prose-pre:leading-6 prose-pre:min-h-[4em]
+    <article class="prose prose-sm md:prose-base 2xl:prose-lg
+    prose-pre:leading-6 prose-pre:min-h-[4em]
+    prose-li:my-0 prose-ul:[&>li]:ml-2 prose-ol:[&>li]:ml-2 prose-li:[&::marker]:font-light
     flex-1 sm:basis-4/5 lg:basis-5/6
     min-w-[60%] sm:min-w-[50%]
     font-inter">
@@ -74,8 +83,7 @@
         {#await data.toc}
         <TocSkeleton/>
         {:then toc}
-        <div class="hidden
-        sm:sticky sm:block sm:top-20">
+        <div class="hidden sm:sticky sm:block sm:top-20">
             <TableOfContent title={data.title} headings={toc} />
         </div>
         {:catch error}

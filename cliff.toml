@@ -1,0 +1,172 @@
+# git-cliff ~ configuration file
+# https://git-cliff.org/docs/configuration
+
+
+[changelog]
+# A Tera template to be rendered for each release in the changelog.
+# See https://keats.github.io/tera/docs/#introduction
+body = """
+{% if version %}\
+    ## [{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }}
+{% else %}\
+    ## [unreleased]
+{% endif %}\
+{% for group, commits in commits | group_by(attribute="group") %}
+    ### {{ group | striptags | trim | upper_first }}
+    {% for commit in commits %}
+        - {% if commit.scope %}*({{ commit.scope }})* {% endif %}\
+            {% if commit.breaking %}[**breaking**] {% endif %}\
+            {{ commit.message | upper_first }}\
+    {% endfor %}
+{% endfor %}\n
+"""
+# Remove leading and trailing whitespaces from the changelog's body.
+trim = true
+# Render body even when there are no releases to process.
+render_always = true
+# An array of regex based postprocessors to modify the changelog.
+postprocessors = []
+# render body even when there are no releases to process
+# render_always = true
+# output file path
+# output = "test.md"
+
+[git]
+# Parse commits according to the conventional commits specification.
+# See https://www.conventionalcommits.org
+conventional_commits = true
+# Exclude commits that do not match the conventional commits specification.
+filter_unconventional = true
+# Require all commits to be conventional.
+# Takes precedence over filter_unconventional.
+require_conventional = false
+# Split commits on newlines, treating each line as an individual commit.
+split_commits = false
+# An array of regex based parsers to modify commit messages prior to further processing.
+commit_preprocessors = [
+    # Replace issue numbers with link templates to be updated in `changelog.postprocessors`.
+    #{ pattern = '\((\w+\s)?#([0-9]+)\)', replace = "([#${2}](<REPO>/issues/${2}))"},
+    # Check spelling of the commit message using https://github.com/crate-ci/typos.
+    # If the spelling is incorrect, it will be fixed automatically.
+    #{ pattern = '.*', replace_command = 'typos --write-changes -' },
+]
+# Prevent commits that are breaking from being excluded by commit parsers.
+protect_breaking_commits = false
+# An array of regex based parsers for extracting data from the commit message.
+# Assigns commits to groups.
+# Optionally sets the commit's scope and can decide to exclude commits from further processing.
+commit_parsers = [
+    # Priority 0: Breaking changes and critical
+    { message = "^(?i)(?:💥|BREAK(?:ING)?|BREAK)\\b", group = "<!-- 0 -->💥 BREAKING CHANGES" },
+    { message = "^(?i)(?:🚑|hotfix)\\b", group = "<!-- 0 -->🚑 Critical Hotfix" },
+
+    # Priority 1: Core development
+    { message = "^(?i)(?:✨|feat)\\b", group = "<!-- 1 -->✨ Features" },
+    { message = "^(?i)(?:🐛|fix)\\b", group = "<!-- 2 -->🐛 Bug Fixes" },
+    { message = "^(?i)(?:🔒|🛡️|security)\\b", group = "<!-- 3 -->🔒 Security" },
+    { message = "^(?i)(?:⚡️|perf)\\b", group = "<!-- 4 -->⚡️ Performance" },
+
+    # Priority 2: Code quality
+    { message = "^(?i)(?:♻️|refactor)\\b", group = "<!-- 5 -->♻️ Code Refactoring" },
+    { message = "^(?i)(?:🎨|style)\\b", group = "<!-- 6 -->🎨 Code Style" },
+    { message = "^(?i)(?:🚨|lint)\\b", group = "<!-- 7 -->🚨 Linting" },
+
+    # Priority 3: Testing and validation
+    { message = "^(?i)(?:✅|test)\\b", group = "<!-- 8 -->✅ Tests" },
+    { message = "^(?i)(?:🤡|mock)\\b", group = "<!-- 9 -->🤡 Mock" },
+    { message = "^(?i)(?:💚|ci-fix|ci)\\b", group = "<!-- 10 -->💚 CI Fixes" },
+
+    # Priority 4: Documentation and content
+    { message = "^(?i)(?:📝|docs?|doc)\\b", group = "<!-- 11 -->📝 Documentation" },
+    { message = "^(?i)(?:💬|text|content)\\b", group = "<!-- 12 -->💬 Content" },
+    { message = "^(?i)(?:🌐|i18n|intl|translate)\\b", group = "<!-- 13 -->🌐 Internationalization" },
+
+    # Priority 5: UI/UX
+    { message = "^(?i)(?:💄|ui)\\b", group = "<!-- 14 -->💄 UI" },
+    { message = "^(?i)(?:♿|a11y|accessibility)\\b", group = "<!-- 15 -->♿ Accessibility" },
+    { message = "^(?i)(?:📱|responsive)\\b", group = "<!-- 16 -->📱 Responsive Design" },
+    { message = "^(?i)(?:💫|animation)\\b", group = "<!-- 17 -->💫 Animations" },
+
+    # Priority 6: Dependencies and configuration
+    { message = "^(?i)(?:⬆️|upgrade|bump|update|dependabot)\\b", group = "<!-- 18 -->⬆️ Dependencies Upgrade" },
+    { message = "^(?i)(?:⬇️|downgrade)\\b", group = "<!-- 19 -->⬇️ Dependencies Downgrade" },
+    { message = "^(?i)(?:📌|pin-deps|pin)\\b", group = "<!-- 20 -->📌 Pin Dependencies" },
+    { message = "^(?i)(?:➕|add-dep|add dependency|add-deps)\\b", group = "<!-- 21 -->➕ Add Dependency" },
+    { message = "^(?i)(?:➖|remove-dep|remove dependency|remove-deps)\\b", group = "<!-- 22 -->➖ Remove Dependency" },
+    { message = "^(?i)(?:🔧|config|configuration)\\b", group = "<!-- 23 -->🔧 Configuration" },
+
+    # Priority 7: Build and deployment
+    { message = "^(?i)(?:👷|build)\\b", group = "<!-- 24 -->👷 Build System" },
+    { message = "^(?i)(?:📦|package)\\b", group = "<!-- 25 -->📦 Packages" },
+    { message = "^(?i)(?:🚀|deploy|deployment)\\b", group = "<!-- 26 -->🚀 Deployment" },
+    # { message = "^(?i)(?:🔖|release)\\b", group = "<!-- 27 -->🔖 Release" },
+
+    # Priority 8: Data and database
+    { message = "^(?i)(?:🗃️|database|db|migration)\\b", group = "<!-- 28 -->🗃️ Database" },
+    { message = "^(?i)(?:🌱|seed)\\b", group = "<!-- 29 -->🌱 Seed Files" },
+    { message = "^(?i)(?:🔍|analytics|telemetry)\\b", group = "<!-- 30 -->🔍 Analytics" },
+
+    # Priority 9: Development workflow
+    { message = "^(?i)(?:🚧|wip)\\b", group = "<!-- 31 -->🚧 Work in Progress" },
+    { message = "^(?i)(?:🔀|merge)\\b", group = "<!-- 32 -->🔀 Merge" },
+    { message = "^(?i)(?:⏪|revert)\\b", group = "<!-- 33 -->⏪ Revert" },
+    { message = "^(?i)(?:🔥|remove|rm)\\b", group = "<!-- 34 -->🔥 Remove Code" },
+
+    # Priority 10: Maintenance and cleanup
+    { message = "^(?i)(?:🙈|gitignore)\\b", group = "<!-- 35 -->.gitignore" },
+    { message = "^(?i)(?:📄|license)\\b", group = "<!-- 36 -->📄 License" },
+    { message = "^(?i)(?:💡|comments)\\b", group = "<!-- 37 -->💡 Comments" },
+    { message = "^(?i)(?:🥚|easter-egg)\\b", group = "<!-- 38 -->🥚 Easter Egg" },
+    { message = "^(?i)(?:🍱|assets)\\b", group = "<!-- 39 -->🍱 Assets" },
+
+    # Priority 11: Architecture and infrastructure
+    { message = "^(?i)(?:🏗️|architecture|arch)\\b", group = "<!-- 40 -->🏗️ Architecture" },
+    { message = "^(?i)(?:🧱|infrastructure|infra)\\b", group = "<!-- 41 -->🧱 Infrastructure" },
+    { message = "^(?i)(?:⚗️|experiment|proof-of-concept|poc)\\b", group = "<!-- 42 -->⚗️ Experiments" },
+
+    # Priority 12: Specialized
+    { message = "^(?i)(?:🩹|simple-fix)\\b", group = "<!-- 43 -->🩹 Simple Fix" },
+    { message = "^(?i)(?:🔊|logs-add|add-logs)\\b", group = "<!-- 44 -->🔊 Add Logs" },
+    { message = "^(?i)(?:🔇|logs-remove|remove-logs)\\b", group = "<!-- 45 -->🔇 Remove Logs" },
+    { message = "^(?i)(?:👥|contributors)\\b", group = "<!-- 46 -->👥 Contributors" },
+    { message = "^(?i)(?:🚩|feature-flag|flag)\\b", group = "<!-- 47 -->🚩 Feature Flags" },
+    { message = "^(?i)(?:🥅|error-handling|errors?)\\b", group = "<!-- 48 -->🥅 Error Handling" },
+
+    # Skip patterns for automated commits (dependabot / renovate / release / version bumps / merges)
+    { message = "^(?i)chore\\(release\\): prepare for", skip = true },
+    { message = "^(?i)chore\\(deps.*\\)", skip = true },
+    { message = "^(?i)chore\\(pr\\)", skip = true },
+    { message = "^(?i)chore\\(pull\\)", skip = true },
+    { message = "^(?i)chore: prepare release", skip = true },
+    { message = "^(?i)Bump\\b", skip = true },
+    { message = "^(?i)dependabot(?:/|\\b)", skip = true },
+    { message = "^(?i)renovate(?:/|\\b)", skip = true },
+    { message = "^(?i)Merge (pull request|branch)", skip = true },
+
+    # Catch-all for remaining commits
+    { message = ".*", group = "<!-- 49 -->📋 Other" },
+]
+# Exclude commits that are not matched by any commit parser.
+filter_commits = false
+# An array of link parsers for extracting external references, and turning them into URLs, using regex.
+link_parsers = []
+# Include only the tags that belong to the current branch.
+use_branch_tags = false
+# Order releases topologically instead of chronologically.
+topo_order = false
+# Order releases topologically instead of chronologically.
+topo_order_commits = true
+# Order of commits in each group/release within the changelog.
+# Allowed values: newest, oldest
+sort_commits = "oldest"
+# Process submodules commits
+recurse_submodules = false
+# Regex for matching git tags
+tag_pattern = "v[0-9].*"
+# Skip tags that match this regex
+skip_tags = ".*-(alpha|beta|rc).*"
+
+[bump]
+features_always_bump_minor = true
+breaking_always_bump_major = true
+initial_tag = "0.1.0"
