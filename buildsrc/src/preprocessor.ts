@@ -1,13 +1,11 @@
 import { type PreprocessorGroup } from 'svelte/compiler';
 import MdParser, { type MarkedState, type PostMeta } from "./mdparser.ts";
-import * as path from "path";
-import { writeFile } from 'fs/promises';
 import { filenameOf, pathOf } from './utils.ts';
 import { kebabCase } from 'change-case';
-import { writeFileSync } from 'fs';
+import { readFileSync } from 'fs';
 
-const ATTRs: PostMeta[] = [];
-const OUT_DIR = 'static';
+const TEMPLATE_PATH = './buildsrc/template/post.temp.svelte';
+const POST_TEMPLATE = readFileSync(TEMPLATE_PATH, 'utf-8');
 
 export function markdownSvelte(): PreprocessorGroup {
     const CUSTOM_EXT = ['.svx'];
@@ -15,11 +13,12 @@ export function markdownSvelte(): PreprocessorGroup {
         name: 'markdown-preprocessor',
         async markup({ content, filename = '' }) {
             if (!CUSTOM_EXT.some(it => filename.endsWith(it))) {
-                return { code: content, };
+                return { code: content };
             }
 
             const [dir, _] = pathOf(filename);
             const fname = kebabCase(filenameOf(filename) ?? '');
+
             const $state: MarkedState = {
                 filename: fname,
                 id_gen: {},
@@ -31,82 +30,19 @@ export function markdownSvelte(): PreprocessorGroup {
 
             if (filename.endsWith('.svx') && dir === 'blogposts') {
                 transformed = await parseMd(marked, content);
-                ATTRs.push($state.meta as PostMeta);
             }
-
-            const toc_des = path.join(`${OUT_DIR}/tocs`, `${fname}.json`);
-            const attr_des = path.join(`${OUT_DIR}/attrs`, `${fname}.json`);
-
-            await Promise.all([
-                writeFile(toc_des, JSON.stringify($state.toc)),
-                writeFile(attr_des, JSON.stringify($state.meta)),
-            ]);
 
             return { code: transformed };
         },
     }
 }
 
-let is_called = false;
-
-export function indexesGen(): PreprocessorGroup {
-    // This flag ensures that build_indexes is called only once per build process.
-    // The ATTRs array is re-initialized on each 'buildsrc' build, so no manual reset is needed.
-    const build_indexes = () => {
-        console.log('Building post indexes (all_post.json and badge_*.json)...');
-        writeFileSync(path.join(`${OUT_DIR}/meta`, `all_post.json`), JSON.stringify(ATTRs));
-
-        const BadgeMapping = new Map<string, PostMeta[]>();
-
-        for (const post of ATTRs) {
-            const tags = post?.tags ?? [];
-
-            for (const tag of tags) {
-                if (BadgeMapping.has(tag)) {
-                    const curposts = BadgeMapping.get(tag);
-                    BadgeMapping.set(tag, [...curposts!, post]);
-                } else {
-                    BadgeMapping.set(tag, [post]);
-                }
-            }
-        }
-
-
-        for (const [id, posts] of BadgeMapping.entries()) {
-            writeFileSync(path.join(`${OUT_DIR}/meta`, `badge_${id}.json`), JSON.stringify(posts));
-        }
-    };
-    const call_once = () => {
-        // Trigger index building only once and after at least 4 posts have been processed
-        // (since prerender entries are generated based on these indexes).
-        if (!is_called && ATTRs.length > 3) {
-            build_indexes();
-            is_called = true;
-        }
-    }
-    return {
-        async markup({ content, filename = '' }) {
-            call_once();
-            return { code: content };
-        }
-    }
-}
-
-import { readFileSync } from 'fs';
-
-const templatePath = './buildsrc/template/post.temp.svelte';
-const POST_TEMPLATE = readFileSync(templatePath, 'utf-8');
-
 async function parseMd(marked: ReturnType<typeof MdParser>, content: string): Promise<string> {
     const output = (await marked.parse(content, { async: true }));
-    // WARN: the `marked.$state` being modified during the parse process, please never change this order
     const { meta } = marked.$state;
 
-    // Read 'post.temp.svelte' from the template directory
-    // const templatePath = './buildsrc/template/post.temp.svelte';
     const header = POST_TEMPLATE;
 
-    // Replace Svelte template tokens explicitly
     const processedOutput = output
         .replace(/\{/g, "&lbrace;")
         .replace(/\}/g, "&rbrace;")

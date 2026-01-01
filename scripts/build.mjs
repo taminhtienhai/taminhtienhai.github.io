@@ -35,5 +35,7 @@ await Bun.build({
 	entrypoints: ['./buildsrc/src/index.ts'],
 	outdir: './buildsrc/dist',
 	plugins: [isolatedDecl()],
-	target: "bun",
+	target: "node",
+  format: "esm",
+  tsconfig: "./buildsrc/tsconfig.json"
 });

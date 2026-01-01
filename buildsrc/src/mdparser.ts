@@ -229,13 +229,19 @@ export type PostMeta = PostAttr & {
 import {readingTime} from "reading-time-estimator";
 import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en'
+
+try {
+    TimeAgo.addDefaultLocale(en);
+} catch (e) {
+    console.error(e);
+}
+
 function custom_hooks($state: MarkedState): HooksObject {
     return {
         preprocess(markdown) {
             let { attributes, body }: { attributes: PostAttr, body: string } = fm(markdown);
 
             let rt = readingTime(markdown, 80);
-            TimeAgo.addDefaultLocale(en);
             const timeAgo = new TimeAgo('en-US');
 
             let attr: PostMeta = {
