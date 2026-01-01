@@ -15,14 +15,12 @@
     let windowYOffset = $state(0);
     let search_input: HTMLInputElement | undefined = $state();
 
-    const changeOnScroll: Action<HTMLElement,string[] | undefined,{}> = (node, data = ['py-0']) => {
-        $effect(() => {
-            if (windowYOffset > 50) {
-                node.classList.add(...data);
-            } else {
-                node.classList.remove(...data);
-            }
-        });
+    const changeOnScroll = (data = ['py-0']) => (node: HTMLElement) => {
+        if (windowYOffset > 50) {
+            // node?.classList?.add(...data);
+        } else if (data.length > 0) {
+            // node?.classList?.remove(...data);
+        }
     };
 
     const handleKeyboardInput = (event: KeyboardEvent) => {
@@ -36,16 +34,12 @@
         AppState.isDark = document.documentElement.classList.contains('dark');
     };
 
-    const activeMenu: Attachment = (self: Element) => {
-        self.addEventListener('click', (_event) => {
-            self.parentNode?.parentNode?.querySelectorAll('a').forEach(item => item.classList.remove('active'));
-            self.classList.add('active');
-        });
-        return () => {};
-    };
-
     const clearActiveMenu = () => {
-        document.getElementById('app-menu')?.querySelectorAll('a').forEach(item => item.classList.remove('active'));
+        document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+    };
+    const activeMenuV2 = (e: Event) => {
+        clearActiveMenu();
+        (e.target as HTMLElement).classList.add('active');
     };
 
     onMount(() => AppState.isDark = document.documentElement.classList.contains('dark'));
@@ -61,11 +55,11 @@ shared="bg-base-300"
 dark="[&>div]:absolute [&>div]:inset-0 [&>div]:bg-[radial-gradient(circle_500px_at_50%_200px,#3e3e3e,transparent)]"
 light="bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"/>
 
-<nav use:changeOnScroll
+<nav
 class="navbar bg-transparent text-base-content backdrop-blur-xs
-pr-5 sticky top-0 z-50 transition-all">
+pr-5 sticky top-0 z-50 transition-all" {@attach changeOnScroll()}>
     <div class="flex-none block">
-        <a href="/" class="btn btn-ghost text-2xl" use:changeOnScroll={['']} onclick={() => clearActiveMenu()}>
+        <a href="/" class="btn btn-ghost text-2xl" {@attach changeOnScroll([''])} onclick={() => clearActiveMenu()}>
             <svg width="100" height="60" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
                 <!-- Gradient Definition -->
                 <defs>
@@ -87,21 +81,24 @@ pr-5 sticky top-0 z-50 transition-all">
         </a>
     </div>
     <div class="flex-1 flex justify-center">
-        <div class="dropdown dropdown-center">
-            <SearchInput exclass="m-auto w-full max-h-[90%] sm:max-h-full shadow-md"
+        <div class="dropdown dropdown-bottom dropdown-center">
+            <SearchInput
+            class="m-auto w-full max-h-[90%] sm:max-h-full shadow-md peer"
             bind:self={search_input}
             bind:value={searchText}/>
             <SearchOutput
-            exclass="dropdown-content shadow-sm w-full mt-2"
+            class="dropdown-content shadow-sm w-full mt-2"
             search_input={searchText}
             />
         </div>
     </div>
     <div class="flex gap-4">
-        <ul id="app-menu" class="menu menu-horizontal text-scale-base">
-            <li><a href="/blog" {@attach activeMenu}>Blog</a></li>
-            <li><a href="/showcase" {@attach activeMenu}>Showcase</a></li>
-        </ul>
+        <div class="breadcrumbs">
+            <ul class="menu menu-horizontal text-scale-base">
+                <li><a class="menu-item" href="/blog" onclick={activeMenuV2}>Blog</a></li>
+                <li><a class="menu-item" href="/showcase" onclick={activeMenuV2}>Showcase</a></li>
+            </ul>
+        </div>
         <label class="swap swap-rotate self-center h-full text-scale-lg">
             <input type="checkbox" value="light" class="theme-controller" onclick={toggleDark} />
             <div class="swap-on"><Icon icon="noto:sun" /></div>
@@ -110,6 +107,6 @@ pr-5 sticky top-0 z-50 transition-all">
     </div>
 </nav>
 
-<main class="size-full min-h-screen">
+<main class="size-full flex-auto">
     {@render children()}
 </main>

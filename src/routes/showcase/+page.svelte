@@ -5,6 +5,38 @@
     import SearchPanel from "$lib/widget/SearchFilter.svelte";
     import LoginForm from "$lib/widget/LoginForm.svelte";
     import Callout from "$lib/widget/Callout.svelte";
+    import { DragState, DropZone } from "$lib/control/DnD.svelte";
+
+
+	let draggable = $state();
+	let container = $state();
+    let dropZone = $state();
+
+	const dnd = new DragState({
+		element: () => draggable,
+		constraint: () => container,
+        initialPosition: { x: 0, y: 0 },
+        axis: 'both',
+		onDragEnd: (e, pos) => {
+			console.log('Dropped at:', pos);
+		}
+	});
+
+    const zone = new DropZone({
+        zoneElement: () => dropZone,
+        dndState: dnd, // Pass the dnd instance
+        onDrop: (el) => {
+            $inspect('✅ DROPPED!', el);
+            // Snap to zone center (example)
+            // dnd.setPosition(50, 50);
+        },
+        onEnter: (el) => {
+            $inspect('➡️ ENTERED zone', el);
+        },
+        onLeave: (el) => {
+            $inspect('⬅️ LEFT zone', el);
+        }
+    });
 </script>
 
 <svelte:head>
@@ -72,5 +104,45 @@ Dropdown Menu
 <Callout/>
 </section>
 
+<div class="divider text-2xl font-bold my-20">
+    Drag and Drop
+</div>
+
+<section class="container h-100 w-100 bg-slate-700 relative" bind:this={container} >
+    <div
+        bind:this={dropZone}
+        class="drop-zone"
+        class:is-over={zone.isOver}
+    >
+        Drop Here {zone.isOver ? '🔥' : ''}
+    </div>
+	<div bind:this={draggable} class="draggable w-fit">
+		Drag me! {dnd.isDragging ? '🎯' : ''}
+	</div>
+</section>
+
 
 <div class="footer h-36"></div>
+
+<style>
+    .drop-zone {
+        position: absolute;
+        top: 50px;
+        left: 50px;
+        width: 150px;
+        height: 150px;
+        background-color: rgba(0, 0, 0, 0.2);
+        border: 2px dashed #666;
+        border-radius: 5px;
+        display: grid;
+        place-items: center;
+        color: #999;
+        transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    /* Style for when the drop zone is active */
+    .drop-zone.is-over {
+        background-color: rgba(0, 255, 0, 0.2);
+        border-color: #0f0;
+    }
+</style>

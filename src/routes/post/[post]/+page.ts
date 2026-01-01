@@ -18,4 +18,3 @@ export const load: PageLoad = async ({ params, fetch }) => {
 }
 
 export const prerender = 'auto';
-

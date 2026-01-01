@@ -26,6 +26,8 @@ export const findPostsByBadge: (badge: string) => Promise<{ data: Post[], error?
 }
 
 
+
+
 export const findPostsByTitle: (text: string) => Promise<{ data: Post[], error?: Error }>
 = (text) => findAllPosts()
 .then(posts => {
@@ -33,7 +35,9 @@ export const findPostsByTitle: (text: string) => Promise<{ data: Post[], error?:
         return ({ error: posts.error, data: [] });
     }
 
-    return {data: posts.data.filter(p => p.title.includes(text))}
+    return {data: posts.data.filter(p => p.title
+        .toLowerCase()
+        .includes(text.toLowerCase()))}
 });
 
 

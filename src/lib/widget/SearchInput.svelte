@@ -1,19 +1,24 @@
 <script lang="ts">
+    import { cn, type WithElementRef } from "$lib/utils";
     import Icon from "@iconify/svelte";
+    import type { HTMLAttributes } from "svelte/elements";
 
+    type SearchInput = {
+        self?: HTMLInputElement,
+        value?: string,
+    };
     const id_gen = $props.id();
     let {
         self = $bindable(),
-        exclass = '',
         value = $bindable(),
-    } = $props();
+        class: exclass = '',
+        ...restProps
+    }: WithElementRef<SearchInput & HTMLAttributes<HTMLLabelElement>> = $props();
 
     const id = `${id_gen}-search-bar`;
 </script>
 
-<label for="{id}"
-class="input {exclass}
-focus-within:outline-none">
+<label for={id} class={cn('input focus-within:outline-none', exclass)} {...restProps}>
     <Icon icon="material-symbols-light:search" class="opacity-50 h-full w-fit"/>
     <input id="{id}"
         type="search"

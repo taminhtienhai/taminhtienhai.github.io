@@ -29,3 +29,8 @@ export type Post = {
     created_date: string;
     tags: string[];
 };
+
+export type PostFilterOptions = {
+    category?: string;
+    tag?:string;
+};

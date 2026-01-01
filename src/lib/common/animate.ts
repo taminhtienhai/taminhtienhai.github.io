@@ -1,6 +1,9 @@
 import { elasticOut } from 'svelte/easing';
 
-export function typewriter(node: HTMLElement, { speed = 1 }: { speed?: number }) {
+export function typewriter(
+    node: HTMLElement,
+    { speed = 1, wordDelay = 150 }: { speed?: number; wordDelay?: number }
+) {
     const valid = node.childNodes.length === 1 && node.childNodes[0].nodeType === Node.TEXT_NODE;
 
     if (!valid) {
@@ -8,13 +11,46 @@ export function typewriter(node: HTMLElement, { speed = 1 }: { speed?: number })
     }
 
     const text = node.textContent ?? '';
-    const duration = text.length / (speed * 0.01);
+    const words = text.split(/(\s+)/); // Preserve whitespace
+
+    // Calculate duration: base typing + delays between words
+    const charDuration = text.length / (speed * 0.01);
+    const wordCount = words.filter(w => w.trim()).length;
+    const delayDuration = (wordCount - 1) * wordDelay;
+    const totalDuration = charDuration + delayDuration;
 
     return {
-        duration,
+        duration: totalDuration,
         tick: (t: number) => {
-            const i = ~~(text.length * t);
-            node.textContent = text.slice(0, i);
+            const elapsed = t * totalDuration;
+            let charBudget = (elapsed / totalDuration) * text.length;
+
+            let displayText = '';
+            let charCount = 0;
+            let wordsTyped = 0;
+
+            for (const word of words) {
+                const wordLen = word.length;
+                const isWhitespace = !word.trim();
+
+                // Apply delay only after non-whitespace words
+                if (!isWhitespace && wordsTyped > 0) {
+                    charBudget = Math.max(0, ((elapsed - (wordsTyped * wordDelay)) / totalDuration) * text.length);
+                }
+
+                if (charCount + wordLen <= charBudget) {
+                    displayText += word;
+                    charCount += wordLen;
+                    if (!isWhitespace) wordsTyped++;
+                } else {
+                    // Partial word typing
+                    const remaining = Math.floor(charBudget - charCount);
+                    displayText += word.slice(0, Math.max(0, remaining));
+                    break;
+                }
+            }
+
+            node.textContent = displayText;
         }
     };
 }

@@ -38,5 +38,6 @@
     </div>
 </section> -->
 
-<HomePage/>
 {/if}
+
+<HomePage/>

@@ -1,37 +1,47 @@
 <script lang="ts">
-    import { debounce_async } from "../common/utils";
+    import { cn, type WithElementRef } from "$lib/utils";
+    import type { HTMLAttributes } from "svelte/elements";
     import { findPostsByTitle } from "../service";
+    import { Debounced } from "runed";
+    // import { fade, scale, slide } from "svelte/transition";
+
+    type SearchFilter = {
+        search_input?: string,
+    };
 
     const {
-        exclass = '',
         search_input = $bindable(''),
-    } = $props();
+        class: exclass = '',
+        ...restProps
+    }: WithElementRef<SearchFilter & HTMLAttributes<HTMLDivElement>> = $props();
+
+    let timeFilter = $state();
 
     /// load posts
-
-    const debounce = debounce_async(1000)
-    const posts = $derived.by(() => {
+    const posts = new Debounced(() => {
         let input = search_input;
-        return debounce(() => findPostsByTitle(input));
-    });
+        return findPostsByTitle(input);
+    }, 500);
 </script>
 
-<section class="{exclass}">
-    <div class="join w-full *:flex-1">
-        <input class="join-item btn" type="radio" name="options" aria-label="weekly" />
-        <input class="join-item btn" type="radio" name="options" aria-label="monthly" />
-        <input class="join-item btn" type="radio" name="options" aria-label="recent" />
+<div class={cn('join join-vertical', exclass)} {...restProps}>
+    <div class="join-item join w-full *:flex-1">
+        <input class="join-item btn" type="radio" name="options" value="recent" aria-label="recent" bind:group={timeFilter} checked/>
+        <input class="join-item btn" type="radio" name="options" value="weekly" aria-label="weekly" bind:group={timeFilter}/>
+        <input class="join-item btn" type="radio" name="options" value="monthly" aria-label="monthly" bind:group={timeFilter}/>
     </div>
-    <ul class="list bg-base-100 rounded-box shadow-md w-full">
-        {#await posts}
-            <li>Loading...</li>
-        {:then values}
-        {#if values.data.length > 0}
-        <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">
+    <ul class="join-item list bg-base-100 shadow-md w-full">
+        <!-- progressbar -->
+        {#if posts.pending}
+        <progress class="progress w-full h-1"></progress>
+        {/if}
+        {#await posts.current then values}
+        {#if values.data.length > 0 && !posts.pending}
+        <li class="list-row text-xs opacity-60 tracking-wide">
             Most popular posts this week
         </li>
         {/if}
-
+        <!-- show items -->
         {#each values.data as item}
         <li class="list-row">
             <div class="list-col-grow">
@@ -40,8 +50,12 @@
             </div>
         </li>
         {:else}
-        <li class="list-row text-base-content/60">Oh no, not found any results</li>        
+        <li class="list-row text-base-content/60">Oh no, not found any results</li>
         {/each}
+        <!-- show error -->
+        {#if values.error}
+        <li class="list-row">{values.error}</li>
+        {/if}
         {/await}
     </ul>
-</section>
+</div>

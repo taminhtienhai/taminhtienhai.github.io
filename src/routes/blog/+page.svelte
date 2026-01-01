@@ -40,7 +40,7 @@
 <svelte:window bind:scrollY={wScrollY} />
 
 {#if !navigating}
-    {#each [1, 2, 3] as const as _}
+    {#each { length: 3 } as const as _}
         <PostCardSkeleton />
     {/each}
 {:else if posts}
@@ -55,6 +55,7 @@
 		<span>No posts found in {activeTl()} </span>
 	</p>
 	{/if}
+    <section class="w-full h-20"></section>
 {:else}
     <p class="text-error">No posts found</p>
 {/if}

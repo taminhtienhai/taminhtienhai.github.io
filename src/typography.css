@@ -7,3 +7,7 @@ html.dark .prose code {
 .prose code {
     @apply text-rose-500 border-rose-900 rounded-sm px-[0.4em] py-[0.1em]
 }
+
+.active {
+  @apply underline
+}

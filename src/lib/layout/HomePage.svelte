@@ -1,8 +1,12 @@
 <script lang="ts">
-    import { onDestroy, onMount } from "svelte";
+    import { typewriter } from "$lib/common/animate";
+    import { IsMounted } from "runed";
 
-    onMount(() => document.body.classList.add('overflow-y-hidden'));
-    onDestroy(() => document.body.classList.remove('overflow-y-hidden'))
+    // import { onDestroy, onMount } from "svelte";
+    // onMount(() => document.body.classList.add('overflow-y-hidden'));
+    // onDestroy(() => document.body.classList.remove('overflow-y-hidden'))
+
+    const isMounted = new IsMounted();
 </script>
 
 <!-- <div class="fixed inset-0">
@@ -11,32 +15,14 @@
   </div>
 </div> -->
 
-<main class="h-screen overflow-y-auto snap-y snap-mandatory *:snap-center relative">
-    <!-- Welcome message, brieft about myself -->
-    <section class="hero min-h-screen">
-        <div class="hero-content text-center">
-          <div class="max-w-md">
-            <h1 class="text-5xl font-bold">Section 01</h1>
-            <p class="py-6">
-              Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
-              quasi. In deleniti eaque aut repudiandae et a id nisi.
-            </p>
-            <button class="btn btn-primary">Get Started</button>
-          </div>
-        </div>
-    </section>
+<section class="size-full pt-[20%]">
+    <span class="text-rotate text-3xl leading-loose w-full duration-40000">
+        <span class="justify-items-center">
+            <span>"A clever person solves a problem. A wise person avoids it." — Gist</span>
+            <span>"Simplicity is the soul of efficiency." — newroco</span>
+            <span>"Innovation thrives where logic and imagination shake hands." — Hello Swanky</span>
+            <span>"Your most unhappy customers are your greatest source of learning" - Bill Gates</span>
+        </span>
+    </span>
+</section>
 
-    <!-- Show list of highlighted posts -->
-    <section class="hero min-h-screen">
-        <div class="hero-content text-center">
-          <div class="max-w-md">
-            <h1 class="text-5xl font-bold">Section 02</h1>
-            <p class="py-6">
-              Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
-              quasi. In deleniti eaque aut repudiandae et a id nisi.
-            </p>
-            <button class="btn btn-primary">Get Started</button>
-          </div>
-        </div>
-    </section>
-</main>
