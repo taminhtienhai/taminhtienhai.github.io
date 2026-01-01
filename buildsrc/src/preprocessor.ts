@@ -47,10 +47,11 @@ export function markdownSvelte(): PreprocessorGroup {
     }
 }
 
+let is_called = false;
+
 export function indexesGen(): PreprocessorGroup {
     // This flag ensures that build_indexes is called only once per build process.
     // The ATTRs array is re-initialized on each 'buildsrc' build, so no manual reset is needed.
-    let is_called = false;
     const build_indexes = () => {
         console.log('Building post indexes (all_post.json and badge_*.json)...');
         writeFileSync(path.join(`${OUT_DIR}/meta`, `all_post.json`), JSON.stringify(ATTRs));
@@ -93,14 +94,17 @@ export function indexesGen(): PreprocessorGroup {
 
 import { readFileSync } from 'fs';
 
+const templatePath = './buildsrc/template/post.temp.svelte';
+const POST_TEMPLATE = readFileSync(templatePath, 'utf-8');
+
 async function parseMd(marked: ReturnType<typeof MdParser>, content: string): Promise<string> {
     const output = (await marked.parse(content, { async: true }));
     // WARN: the `marked.$state` being modified during the parse process, please never change this order
     const { meta } = marked.$state;
 
     // Read 'post.temp.svelte' from the template directory
-    const templatePath = './buildsrc/template/post.temp.svelte';
-    const header = readFileSync(templatePath, 'utf-8');
+    // const templatePath = './buildsrc/template/post.temp.svelte';
+    const header = POST_TEMPLATE;
 
     // Replace Svelte template tokens explicitly
     const processedOutput = output

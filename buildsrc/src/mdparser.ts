@@ -137,7 +137,7 @@ export function compilerErrorBlock(options = {}): ShikiTransformer {
         // @ts-ignore
         // node.properties['data-code'] = this.source;
         // node.properties['data-debounce'] = toggleMs;
-        node.properties['class'] += ' line-clamp-20 overflow-auto';
+        node.properties['class'] += ' line-clamp-20 overflow-auto autohide-scrollbar';
 
         const lang = node.properties['data-lang'];
         if (lang === '') {
