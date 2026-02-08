@@ -29,20 +29,35 @@ SUB_DIRS.forEach((sub) => {
     }
 })
 
-// --- Logic from buildsrc/build.mjs ---
-await Bun.build({
-	entrypoints: ['./buildsrc/src/index.ts'],
-	outdir: './buildsrc/dist',
-	target: "node",
-  format: "esm",
-  tsconfig: "./buildsrc/tsconfig.json"
+console.time("Build & Types");
+
+const buildTask = Bun.build({
+    entrypoints: ['./buildsrc/src/index.ts'],
+    outdir: './buildsrc/dist',
+    target: "node",
+    format: "esm",
 });
 
-// Generate type definitions using tsc
-console.log("Generating type definitions for buildsrc...");
-const { exitCode } = Bun.spawnSync(["bun", "x", "tsc", "-p", "./buildsrc/tsconfig.json"]);
-if (exitCode !== 0) {
-    console.error("Failed to generate type definitions");
-    process.exit(exitCode);
+// Spawn tsc asynchronously
+const typeTask = Bun.spawn(["bun", "x", "tsc", "-p", "./buildsrc/tsconfig.json"], {
+    stderr: "inherit", // Pipe errors directly
+    stdout: "inherit"
+});
+
+const [buildResult, typeProc] = await Promise.all([
+    buildTask,
+    typeTask.exited
+]);
+
+console.timeEnd("Build & Types");
+
+if (!buildResult.success) {
+    console.error("Bundling failed");
+    console.error(buildResult.logs);
+    process.exit(1);
 }
-console.log("Type definitions generated successfully.");
+
+if (typeProc !== 0) {
+    console.error(`Type generation failed with exit code ${typeProc}`);
+    process.exit(typeProc);
+}
