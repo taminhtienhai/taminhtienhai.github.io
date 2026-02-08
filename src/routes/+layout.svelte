@@ -81,19 +81,19 @@ pr-5 sticky top-0 z-50 transition-all" {@attach changeOnScroll()}>
         </a>
     </div>
     <div class="flex-1 flex justify-center">
-        <div class="dropdown dropdown-bottom dropdown-center">
+        <div class="dropdown dropdown-bottom dropdown-center group">
             <SearchInput
             class="m-auto w-full max-h-[90%] sm:max-h-full shadow-md peer"
             bind:self={search_input}
             bind:value={searchText}/>
             <SearchOutput
-            class="dropdown-content shadow-sm w-full mt-2"
+            class="dropdown-content shadow-sm w-full mt-2 pointer-events-none group-focus-within:pointer-events-auto"
             search_input={searchText}
             />
         </div>
     </div>
     <div class="flex gap-4">
-        <div class="breadcrumbs">
+        <div>
             <ul class="menu menu-horizontal text-scale-base">
                 <li><a class="menu-item" href="/blog" onclick={activeMenuV2}>Blog</a></li>
                 <li><a class="menu-item" href="/showcase" onclick={activeMenuV2}>Showcase</a></li>

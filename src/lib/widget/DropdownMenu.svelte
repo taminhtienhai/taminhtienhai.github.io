@@ -10,9 +10,9 @@
     }: DropdownInput = $props();
 </script>
 
-<div class="dropdown">
+<div class="dropdown group">
     <div tabindex="0" role="button" class="btn btn-primary m-1 text-primary-content">{text}</div>
-    <ul class="dropdown-content menu bg-base-100 rounded-box z-1 shadow-md">
+    <ul class="dropdown-content menu bg-base-100 rounded-box z-1 shadow-md pointer-events-none group-focus-within:pointer-events-auto">
         {#each items as item}
         <li><a>{item}</a></li>
         {/each}
