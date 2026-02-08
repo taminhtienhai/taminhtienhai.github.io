@@ -18,11 +18,8 @@ export function blogPlugin(): Plugin {
         name: 'vite-plugin-blog-indexes',
 
         async buildStart() {
-            console.log('🔌 [blog-plugin] Scanning posts...');
-
             await ensureDirs();
 
-            // REPLACEMENT: Use fast-glob instead of Bun.Glob
             // We get absolute paths to make processing easier
             const files = await glob('**/*.svx', {
                 cwd: CONTENT_DIR,
@@ -36,13 +33,10 @@ export function blogPlugin(): Plugin {
 
             await Promise.all(tasks);
             await generateIndexes();
-            console.log(`✅ [blog-plugin] Indexed ${postCache.size} posts.`);
         },
 
         async handleHotUpdate({ file, server }) {
             if (file.endsWith('.svx') && file.includes(CONTENT_DIR)) {
-                console.log(`📝 [blog-plugin] Re-processing: ${path.basename(file)}`);
-
                 await processFile(file);
                 await generateIndexes();
 
@@ -57,7 +51,6 @@ export function blogPlugin(): Plugin {
 }
 
 async function processFile(filePath: string) {
-    // REPLACEMENT: Use fs.readFile instead of Bun.file()
     const content = await readFile(filePath, 'utf-8');
     const fname = kebabCase(filenameOf(filePath) ?? '');
 
