@@ -1,6 +1,5 @@
-import { useEventListener } from "$lib/utilities/use-event-listener/index.js";
 import { extract, type MaybeGetter } from "runed";
-import { onMount, onDestroy } from "svelte";
+import { onDestroy, untrack } from "svelte";
 
 function noop(): void {}
 
@@ -105,7 +104,7 @@ export class DragState {
 	onDrag = $derived(this.#options.onDrag ?? noop);
 	onDragEnd = $derived(this.#options.onDragEnd ?? noop);
 	eventListenerOptions = $derived(
-		this.#options.eventListenerOptions ?? { capture: true }
+		this.#options.eventListenerOptions ?? { capture: true, passive: false  }
 	);
 	onError = $derived(
 		this.#options.onError ?? ((e: unknown) => console.error(e))
@@ -119,6 +118,7 @@ export class DragState {
 	pointerY = $state(0);
 
 	/** Internal tracking */
+    #activePointerId: number | null = null;
 	#startX = 0;
 	#startY = 0;
 	#initialElementX = 0;
@@ -129,15 +129,20 @@ export class DragState {
 	constructor(options: DnDStateOptions) {
 		this.#options = options;
 
-		useEventListener(
-			() => this.handle,
-			"pointerdown",
-			this.#onPointerDown,
-			this.eventListenerOptions
-		);
+		$effect(() => {
+			const h = this.handle;
+			if (!h || this.disabled) return;
 
-		onMount(() => {
-			this.#initializePosition();
+			h.addEventListener("pointerdown", this.#onPointerDown, this.eventListenerOptions);
+			return () => {
+				h.removeEventListener("pointerdown", this.#onPointerDown, this.eventListenerOptions);
+			};
+		});
+
+		$effect(() => {
+			if (this.element) {
+				untrack(() => this.#initializePosition());
+			}
 		});
 
 		onDestroy(() => {
@@ -171,13 +176,14 @@ export class DragState {
 	#onPointerDown = (e: PointerEvent) => {
 		if (this.disabled || !this.element || !this.handle) return;
 
-		// Only respond to primary button (left click/touch)
-		if (e.button !== 0) return;
+		if (e.button !== 0) return; // Primary button only
+		if (this.#activePointerId !== null) return; // Already dragging
 
 		try {
 			e.preventDefault();
 			e.stopPropagation();
 
+			this.#activePointerId = e.pointerId;
 			this.isDragging = true;
 			this.#startX = e.clientX;
 			this.#startY = e.clientY;
@@ -192,8 +198,10 @@ export class DragState {
 				this.#constraintBounds = this.constraint.getBoundingClientRect();
 			}
 
-			// Capture pointer for all subsequent events
+			// Capture pointer and disable touch actions for all subsequent events
 			this.handle.setPointerCapture(e.pointerId);
+			this.handle.style.touchAction = "none";
+            if (this.element) this.element.style.willChange = "transform";
 
 			// Attach move/up listeners to document for smooth dragging
 			document.addEventListener("pointermove", this.#onPointerMove, this.eventListenerOptions);
@@ -208,6 +216,7 @@ export class DragState {
 
 	#onPointerMove = (e: PointerEvent) => {
 		if (!this.isDragging || !this.element) return;
+		if (e.pointerId !== this.#activePointerId) return;
 
 		try {
 			const deltaX = e.clientX - this.#startX;
@@ -246,9 +255,11 @@ export class DragState {
 
 	#onPointerUp = (e: PointerEvent) => {
 		if (!this.isDragging) return;
+		if (e.pointerId !== this.#activePointerId) return;
 
 		try {
 			this.isDragging = false;
+			this.#activePointerId = null;
 
 			document.removeEventListener("pointermove", this.#onPointerMove, this.eventListenerOptions);
 			document.removeEventListener("pointerup", this.#onPointerUp, this.eventListenerOptions);
@@ -256,8 +267,10 @@ export class DragState {
 
 			if (this.handle) {
 				this.handle.releasePointerCapture(e.pointerId);
+				this.handle.style.touchAction = "";
 			}
 
+            if (this.element) this.element.style.willChange = "";
 			this.onDragEnd(e, { x: this.x, y: this.y });
 		} catch (error) {
 			this.onError(error);
@@ -343,6 +356,7 @@ export class DropZone {
 
 	/** Internal tracking */
 	#zoneRect = $state<DOMRect | null>(null);
+	#resizeObserver: ResizeObserver | null = null;
 
 	constructor(options: DropZoneOptions) {
 		this.#options = options;
@@ -374,13 +388,34 @@ export class DropZone {
 			return false;
 		};
 
+		$effect(() => {
+            const el = this.zoneElement;
+            if (!el) {
+                this.#resizeObserver?.disconnect();
+                this.#resizeObserver = null;
+                return;
+            }
+
+            this.#resizeObserver = new ResizeObserver(() => {
+                if (el) {
+                    this.#zoneRect = el.getBoundingClientRect();
+                }
+            });
+            this.#resizeObserver.observe(el);
+
+            return () => {
+                this.#resizeObserver?.disconnect();
+                this.#resizeObserver = null;
+            };
+        });
+
 		// 2. Effect to handle enter/leave events
 		$effect(() => {
 			const isNowOver = isPointerOver();
-			const wasOver = $state.snapshot(this.isOver);
+			const wasOver = untrack(() => this.isOver);
 			this.isOver = isNowOver; // Update public state
 
-			const draggable = this.dnd.element;
+			const draggable = untrack(() => this.dnd.element);
 			if (!draggable) return;
 
 			if (isNowOver && !wasOver) {
@@ -397,8 +432,8 @@ export class DropZone {
 
 			// This code runs when `isDragging` becomes false.
 			// We check the *last known value* of `isOver`.
-			const wasOver = $state.snapshot(this.isOver);
-			const draggable = this.dnd.element;
+			const wasOver = untrack(() => this.isOver);
+			const draggable = untrack(() => this.dnd.element);
 
 			if (wasOver && draggable) {
 				this.onDrop(draggable);
