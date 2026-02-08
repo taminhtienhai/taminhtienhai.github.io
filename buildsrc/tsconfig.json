@@ -21,9 +21,9 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
 
-    "rootDir": ".",
+    "rootDir": "src",
     "outDir": "./dist",
   },
-  "include": ["build.mjs", "src/**/*"],
-  "exclude": ["./dist"]
+  "include": ["src/**/*"],
+  "exclude": ["./dist", "test"]
 }

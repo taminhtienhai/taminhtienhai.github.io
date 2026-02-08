@@ -6,7 +6,8 @@
   "type": "module",
   "version": "1.0.0",
   "scripts": {
-    "build": "bun build.mjs"
+    "build": "bun x tsc -p tsconfig.json",
+    "test": "vitest"
   },
   "devDependencies": {
     "@shikijs/transformers": "^3.15.0",

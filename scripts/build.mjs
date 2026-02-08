@@ -1,7 +1,6 @@
 
 import { existsSync, mkdirSync, readdirSync, unlinkSync } from "fs";
 import path from "path";
-import isolatedDecl from 'bun-plugin-isolated-decl';
 
 // --- Logic from root build.mjs ---
 const OUT_DIR = 'static';
@@ -34,8 +33,16 @@ SUB_DIRS.forEach((sub) => {
 await Bun.build({
 	entrypoints: ['./buildsrc/src/index.ts'],
 	outdir: './buildsrc/dist',
-	plugins: [isolatedDecl()],
 	target: "node",
   format: "esm",
   tsconfig: "./buildsrc/tsconfig.json"
 });
+
+// Generate type definitions using tsc
+console.log("Generating type definitions for buildsrc...");
+const { exitCode } = Bun.spawnSync(["bun", "x", "tsc", "-p", "./buildsrc/tsconfig.json"]);
+if (exitCode !== 0) {
+    console.error("Failed to generate type definitions");
+    process.exit(exitCode);
+}
+console.log("Type definitions generated successfully.");
