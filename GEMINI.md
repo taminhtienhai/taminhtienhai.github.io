@@ -1,47 +1,37 @@
-# Project Overview
+# Project: taminhtienhai.github.io
 
-This is a personal blog/portfolio website built with SvelteKit. It serves as a platform to share articles on programming languages, life experiences, and ideas. The site features a custom markdown processing pipeline for blog posts, dynamic routing, and a responsive UI.
+SvelteKit 2 + Svelte 5 personal blog/portfolio with a custom Markdown processing pipeline, Tailwind CSS v4, and DaisyUI v5.
 
-## Key Technologies
+## Core Stack
+- **Framework:** SvelteKit 2 (Svelte 5 Runes, Snippets, Attachments)
+- **Styling:** Tailwind CSS v4, DaisyUI v5, `tailwindcss-motion`, `tailwind-scrollbar`
+- **Build Tooling:** Vite 6/8, Bun
+- **Utilities:** `runed`, `change-case`, `tailwind-merge`
 
-*   **Framework:** SvelteKit
-*   **Styling:** Tailwind CSS, DaisyUI, @tailwindcss/typography, tailwind-scrollbar, tailwindcss-motion
-*   **Language:** TypeScript, Svelte
-*   **Build Tool:** Vite
-*   **Package Manager/Runtime:** Bun
-*   **Markdown Processing:** Custom build process using `marked`, `marked-shiki`, `@shikijs/transformers`, `front-matter` for `.svx` (Svelte + Markdown) files.
-*   **Code Highlighting:** Highlight.js
-*   **Linting:** OXLint
+## Markdown Pipeline (`buildsrc` Workspace)
+The project uses a custom pipeline to process `.svx` files in `src/lib/blogposts/`:
+- **Preprocessor:** `markdownSvelte` converts `.svx` (Markdown + YAML frontmatter) into Svelte 5 components using `marked` and `shiki`.
+- **Vite Plugin:** `blogPlugin` extracts metadata and TOCs from `.svx` files and generates JSON indexes in `static/meta/`, `static/tocs/`, and `static/attrs/`.
+- **Templates:** Uses `./buildsrc/template/post.temp.svelte` for consistent post layout.
 
 ## Project Structure
+- `src/lib/blogposts/`: Source `.svx` blog posts (Markdown format).
+- `src/lib/widget/`: Svelte 5 UI components (runes-based).
+- `buildsrc/`: Workspace containing the Markdown parser and build plugins.
+- `static/`: Output directory for generated metadata and TOC JSONs.
+- `assets/`: Static assets (images, favicon). `assets/posts/` contains mirrored `.md` files.
+- `scripts/`: Build orchestration scripts.
 
-*   `assets/`: Static assets like images, favicon, and metadata for posts.
-*   `buildsrc/`: Contains custom build scripts for markdown processing and content generation (e.g., `converter.ts`, `mdparser.ts`, `preprocessor.ts`, `toc.ts`).
-*   `src/`: Main application source code.
-    *   `src/app.css`: Global CSS, including Tailwind CSS imports and custom utilities.
-    *   `src/app.d.ts`: SvelteKit type declarations.
-    *   `src/app.html`: Main HTML template.
-    *   `src/lib/`: Reusable components and modules.
-        *   `src/lib/blogposts/`: Svelte + Markdown (`.svx`) blog post files.
-        *   `src/lib/common/`: Common utilities, constants, and types.
-        *   `src/lib/service/`: Data fetching services for posts.
-        *   `src/lib/widget/`: Reusable Svelte UI components (e.g., `PostCard`, `TableOfContent`, `LoginForm`).
-    *   `src/routes/`: SvelteKit routes defining application pages.
-        *   `src/routes/+layout.svelte`: Main application layout.
-        *   `src/routes/+page.svelte`: Home page.
-        *   `src/routes/blog/`: Blog listing pages (main blog, by badge).
-        *   `src/routes/post/[post]/`: Individual blog post pages.
-        *   `src/routes/showcase/`: Component showcase page.
-*   `static/`: Static files served directly (e.g., `favicon.png`, generated `tocs` and `attrs` JSON files).
+## Key Commands
+- `bun dev`: Starts the development server.
+- `bun build`: Full production build (prebuild + vite build).
+- `bun prebuild`: Cleans `static/` and builds the `buildsrc` workspace.
+- `bun lint`: Runs OXLint for rapid code analysis.
+- `bun check`: Svelte-check for type safety.
 
-## Build and Development
-
-*   **Development:** `bun dev` - Starts the development server.
-*   **Build:** `bun build` - Builds the project for production. This command first runs a custom build process in `buildsrc` to generate post metadata and TOCs, then builds the SvelteKit application.
-*   **Preview:** `bun preview` - Previews the production build.
-*   **Type Checking:** `bun check` - Runs SvelteKit type checks.
-*   **Linting:** `bun lint` - Runs OXLint for code quality.
-
-## Deployment
-
-The project uses `@sveltejs/adapter-static` for static site generation, suitable for deployment on platforms like GitHub Pages. The `.github/workflows/deploy.yml` file likely contains the GitHub Actions configuration for automated deployment.
+## Token Efficiency Guidelines
+- **Context First:** Use `ls -R` or `glob` to map structure before reading files.
+- **Atomic Edits:** Prefer `replace` with minimal context over `write_file` for large files.
+- **Silent Operations:** Use `-q`, `-s`, or `> /dev/null` for verbose CLI tools.
+- **Precise Search:** Use `search_file_content` to locate targets before reading.
+- **Dense Output:** Provide summaries in high-density bullet points/tables.

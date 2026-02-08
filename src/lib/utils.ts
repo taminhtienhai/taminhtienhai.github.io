@@ -1,9 +1,6 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import * as twv from "tailwind-variants";
 
-export function cn(...inputs: ClassValue[]) {
-	return twMerge(clsx(inputs));
-}
+export const cn = twv.cn;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type WithoutChild<T> = T extends { child?: any } ? Omit<T, "child"> : T;

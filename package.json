@@ -5,10 +5,10 @@
 	"type": "module",
 	"scripts": {
 		"favicon": "cp ./assets/favicon.png ./static/favicon.png",
-		"dev": "vite dev",
+		"dev": "bun vite dev",
 		"prebuild": "bun scripts/build.mjs && bun favicon",
-		"build": "bun run prebuild && vite build",
-		"preview": "vite preview",
+		"build": "bun run prebuild && bun vite build",
+		"preview": "bun vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -16,37 +16,33 @@
 		"lint:fix": "oxlint . --fix",
 		"test": "vitest"
 	},
-	"devDependencies": {
-		"@iconify/svelte": "^5.1.0",
-		"@sveltejs/adapter-static": "^3.0.10",
-		"@sveltejs/kit": "^2.0.0",
-		"@sveltejs/vite-plugin-svelte": "^6.0.0",
-		"@tailwindcss/typography": "^0.5.19",
-		"@tailwindcss/vite": "^4.0.0",
-		"build-src": "workspace:*",
+	"dependencies": {
 		"change-case": "^5.4.4",
-		"clsx": "^2.1.1",
-		"daisyui": "^5.0.0",
-		"lit-html": "^3.0.0",
-		"oxlint": "^1.0.0",
-		"svelte": "^5.0.0",
-		"svelte-check": "^4.3.4",
+		"lit-html": "^3.3.2",
+		"runed": "^0.37.1",
+		"tailwind-merge": "^3.4.0",
+		"tailwind-variants": "^3.2.2"
+	},
+	"devDependencies": {
+		"@iconify/svelte": "^5.2.1",
+		"@sveltejs/adapter-static": "^3.0.10",
+		"@sveltejs/kit": "^2.50.2",
+		"@tailwindcss/typography": "^0.5.19",
+		"@tailwindcss/vite": "^4.1.18",
+		"build-src": "workspace:*",
+		"daisyui": "^5.5.18",
+		"oxfmt": "^0.28.0",
+		"oxlint": "^1.43.0",
+		"svelte": "^5.50.0",
+		"svelte-check": "^4.3.6",
 		"tailwind-scrollbar": "^4.0.2",
-		"tailwind-variants": "^3.0.0",
-		"tailwindcss": "^4.0.0",
+		"tailwindcss": "^4.1.18",
 		"tailwindcss-motion": "^1.1.1",
-		"vite": "^7.0.0",
-		"vitest": "^4.0.10"
+		"vite": "^8.0.0-beta.13",
+		"vitest": "^4.0.18"
 	},
 	"peerDependencies": {
 		"typescript": "^5.9.2"
 	},
-	"workspaces": ["buildsrc"],
-	"dependencies": {
-		"runed": "^0.37.0",
-		"tailwind-merge": "^3.4.0"
-	},
-  "overrides": {
-    "vite": "8.0.0-beta.5"
-  }
+	"workspaces": ["buildsrc"]
 }
